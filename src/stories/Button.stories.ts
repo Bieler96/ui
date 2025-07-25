@@ -96,36 +96,3 @@ export const Disabled: Story = {
 		disabled: true,
 	},
 };
-
-export const AllCombinations: Story = {
-	render: () => (
-		<div className= "space-y-8" >
-		<div>
-		<h3 className="text-lg font-semibold mb-4"> Filled Buttons</ h3 >
-	<div className="flex flex-wrap gap-4" >
-		<Button variant="filled" size = "sm" > Small </Button>
-			< Button variant = "filled" size = "md" > Medium </Button>
-				< Button variant = "filled" size = "lg" > Large </Button>
-					</div>
-					</div>
-
-					< div >
-					<h3 className="text-lg font-semibold mb-4" > Outlined Buttons </h3>
-						< div className = "flex flex-wrap gap-4" >
-							<Button variant="outlined" size = "sm" > Small </Button>
-								< Button variant = "outlined" size = "md" > Medium </Button>
-									< Button variant = "outlined" size = "lg" > Large </Button>
-										</div>
-										</div>
-
-										< div >
-										<h3 className="text-lg font-semibold mb-4" > Tonal Buttons </h3>
-											< div className = "flex flex-wrap gap-4" >
-												<Button variant="tonal" size = "sm" > Small </Button>
-													< Button variant = "tonal" size = "md" > Medium </Button>
-														< Button variant = "tonal" size = "lg" > Large </Button>
-															</div>
-															</div>
-															</div>
-	),
-}; 

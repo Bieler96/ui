@@ -1,7 +1,20 @@
 import React from "react";
 
-type DataTableProps = {
-	data: Array<Record<string, any>>;
+export enum Alignment {
+	LEFT = "left",
+	CENTER = "center",
+	RIGHT = "right",
+}
+
+export type ColumnDef<TData> = {
+	accessorKey: keyof TData | string;
+	header: React.ReactNode | (({ column }: { column: ColumnDef<TData> }) => React.ReactNode);
+	cell?: ({ row }: { row: TData }) => React.ReactNode;
+};
+
+export type DataTableProps<TData> = {
+	data: TData[];
+	columns?: ColumnDef<TData>[];
 	headerAlignment?: Alignment;
 	cellAlignment?: Alignment;
 };
@@ -10,12 +23,6 @@ type HeaderGroup = {
 	parent: string;
 	children: string[];
 };
-
-export enum Alignment {
-	LEFT = "left",
-	CENTER = "center",
-	RIGHT = "right",
-}
 
 function getHeaderGroups(data: Array<Record<string, any>>): HeaderGroup[] {
 	const allKeys = new Set<string>();
@@ -52,7 +59,12 @@ function getValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment.CENTER, cellAlignment = Alignment.LEFT }) => {
+function DataTable<TData extends Record<string, any>>({
+	data,
+	columns,
+	headerAlignment = Alignment.CENTER,
+	cellAlignment = Alignment.LEFT,
+}: DataTableProps<TData>) {
 	const getAlignmentClass = (alignment: Alignment) => {
 		switch (alignment) {
 			case Alignment.LEFT: return "text-left";
@@ -70,19 +82,17 @@ const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment
 		);
 	}
 
-	const headerGroups = getHeaderGroups(data);
+	const renderLegacyTable = () => {
+		const headerGroups = getHeaderGroups(data);
+		const flatColumns = headerGroups.flatMap((group) =>
+			group.children.length > 0
+				? group.children.map((child) => `${group.parent}.${child}`)
+				: [group.parent]
+		);
+		const firstIdx = 0;
+		const lastIdx = headerGroups.length - 1;
 
-	const flatColumns = headerGroups.flatMap((group) =>
-		group.children.length > 0
-			? group.children.map((child) => `${group.parent}.${child}`)
-			: [group.parent]
-	);
-
-	const firstIdx = 0;
-	const lastIdx = headerGroups.length - 1;
-
-	return (
-		<div className="overflow-x-auto rounded-lg shadow-sm bg-surface">
+		return (
 			<table className="min-w-full border-separate border-spacing-0 rounded-lg">
 				<thead>
 					<tr>
@@ -95,10 +105,8 @@ const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment
 										: idx === lastIdx
 											? "rounded-tr-lg"
 											: "";
-
 							const isLastGroup = idx === lastIdx;
 							const shouldHaveBorderR = !isLastGroup;
-
 							return group.children.length > 0 ? (
 								<th
 									key={group.parent}
@@ -125,7 +133,6 @@ const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment
 									const isLastChild = childIdx === childArray.length - 1;
 									const isLastGroup = headerGroups.indexOf(group) === headerGroups.length - 1;
 									const shouldHaveBorderR = !(isLastChild && isLastGroup);
-
 									return (
 										<th
 											key={`${group.parent}.${child}`}
@@ -140,10 +147,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment
 				</thead>
 				<tbody>
 					{data.map((row, idx) => (
-						<tr
-							key={idx}
-							className="transition-colors hover:bg-hover cursor-pointer"
-						>
+						<tr key={idx} className="transition-colors hover:bg-hover cursor-pointer">
 							{flatColumns.map((col, colIdx) => {
 								const value = getValue(row, col);
 								const isLastRow = idx === data.length - 1;
@@ -162,8 +166,72 @@ const DataTable: React.FC<DataTableProps> = ({ data, headerAlignment = Alignment
 					))}
 				</tbody>
 			</table>
+		);
+	};
+
+	const renderConfigurableTable = () => {
+		return (
+			<table className="min-w-full border-separate border-spacing-0 rounded-lg">
+				<thead>
+					<tr>
+						{columns!.map((column, idx) => {
+							const firstIdx = 0;
+							const lastIdx = columns!.length - 1;
+							const roundedClass =
+								idx === firstIdx && idx === lastIdx
+									? "rounded-tl-lg rounded-tr-lg"
+									: idx === firstIdx
+										? "rounded-tl-lg"
+										: idx === lastIdx
+											? "rounded-tr-lg"
+											: "";
+							const shouldHaveBorderR = idx !== lastIdx;
+
+							return (
+								<th
+									key={column.accessorKey as string}
+									className={`font-medium px-4 py-3 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} bg-surface-variant text-on-surface border-outline ${roundedClass}`}
+								>
+									{typeof column.header === 'function'
+										? column.header({ column })
+										: column.header}
+								</th>
+							);
+						})}
+					</tr>
+				</thead>
+				<tbody>
+					{data.map((row, rowIdx) => (
+						<tr key={rowIdx} className="transition-colors hover:bg-hover cursor-pointer">
+							{columns!.map((column, colIdx) => {
+								const isLastRow = rowIdx === data.length - 1;
+								const isLastCol = colIdx === columns!.length - 1;
+								const shouldHaveBorderR = !isLastCol;
+								const cellContent = column.cell
+									? column.cell({ row })
+									: getValue(row, column.accessorKey as string);
+
+								return (
+									<td
+										key={column.accessorKey as string}
+										className={`px-4 py-3 ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(cellAlignment)} text-on-surface border-outline-variant ${isLastRow ? "" : "border-b"}`}
+									>
+										{cellContent}
+									</td>
+								);
+							})}
+						</tr>
+					))}
+				</tbody>
+			</table>
+		);
+	};
+
+	return (
+		<div className="overflow-x-auto rounded-lg shadow-sm bg-surface">
+			{columns ? renderConfigurableTable() : renderLegacyTable()}
 		</div>
 	);
-};
+}
 
 export default DataTable;

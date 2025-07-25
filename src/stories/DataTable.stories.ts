@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import React from 'react';
+import DataTable, { Alignment, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
+import Button from '../components/button/Button';
 
-import DataTable, { Alignment } from '../components/datatable/DataTable';
-
-const meta = {
+const meta: Meta<typeof DataTable> = {
 	title: 'Components/DataTable',
 	component: DataTable,
 	parameters: {
@@ -19,10 +20,9 @@ const meta = {
 			options: [Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT],
 		},
 	},
-} satisfies Meta<typeof DataTable>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
 // Beispieldaten für einfache Tabelle
 const simpleData = [
@@ -67,7 +67,7 @@ const largeData = Array.from({ length: 20 }, (_, index) => ({
 	lastLogin: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('de-DE'),
 }));
 
-export const Default: Story = {
+export const Default: StoryObj<typeof DataTable> = {
 	args: {
 		data: simpleData,
 		headerAlignment: Alignment.CENTER,
@@ -75,7 +75,7 @@ export const Default: Story = {
 	},
 };
 
-export const NestedData: Story = {
+export const NestedData: StoryObj<typeof DataTable> = {
 	args: {
 		data: nestedData,
 		headerAlignment: Alignment.CENTER,
@@ -83,7 +83,7 @@ export const NestedData: Story = {
 	},
 };
 
-export const LeftAligned: Story = {
+export const LeftAligned: StoryObj<typeof DataTable> = {
 	args: {
 		data: simpleData,
 		headerAlignment: Alignment.LEFT,
@@ -91,7 +91,7 @@ export const LeftAligned: Story = {
 	},
 };
 
-export const CenterAligned: Story = {
+export const CenterAligned: StoryObj<typeof DataTable> = {
 	args: {
 		data: simpleData,
 		headerAlignment: Alignment.CENTER,
@@ -99,7 +99,7 @@ export const CenterAligned: Story = {
 	},
 };
 
-export const RightAligned: Story = {
+export const RightAligned: StoryObj<typeof DataTable> = {
 	args: {
 		data: simpleData,
 		headerAlignment: Alignment.RIGHT,
@@ -107,7 +107,7 @@ export const RightAligned: Story = {
 	},
 };
 
-export const MixedAlignment: Story = {
+export const MixedAlignment: StoryObj<typeof DataTable> = {
 	args: {
 		data: simpleData,
 		headerAlignment: Alignment.CENTER,
@@ -115,7 +115,7 @@ export const MixedAlignment: Story = {
 	},
 };
 
-export const LargeDataset: Story = {
+export const LargeDataset: StoryObj<typeof DataTable> = {
 	args: {
 		data: largeData,
 		headerAlignment: Alignment.CENTER,
@@ -123,7 +123,7 @@ export const LargeDataset: Story = {
 	},
 };
 
-export const EmptyTable: Story = {
+export const EmptyTable: StoryObj<typeof DataTable> = {
 	args: {
 		data: emptyData,
 		headerAlignment: Alignment.CENTER,
@@ -131,7 +131,7 @@ export const EmptyTable: Story = {
 	},
 };
 
-export const ComplexNestedData: Story = {
+export const ComplexNestedData: StoryObj<typeof DataTable> = {
 	args: {
 		data: [
 			{
@@ -156,4 +156,47 @@ export const ComplexNestedData: Story = {
 		headerAlignment: Alignment.CENTER,
 		cellAlignment: Alignment.LEFT,
 	},
-}; 
+};
+
+// Erstellen Sie einen spezifischen Typ für die Daten und die Story, um die Typsicherheit zu gewährleisten.
+type SimpleData = (typeof simpleData)[0];
+type SimpleDataStory = StoryObj<DataTableProps<SimpleData>>;
+
+const columnsWithCustomCells: ColumnDef<(typeof simpleData)[0]>[] = [
+	{
+		accessorKey: 'name',
+		header: 'Name',
+		cell: ({ row }) => React.createElement('span', { className: 'font-bold' }, row.name),
+	},
+	{
+		accessorKey: 'age',
+		header: 'Alter',
+		cell: ({ row }) => React.createElement('span', null, `${row.age} Jahre`),
+	},
+	{
+		accessorKey: 'city',
+		header: 'Stadt',
+	},
+	{
+		accessorKey: 'occupation',
+		header: 'Beruf',
+	},
+	{
+		accessorKey: 'actions',
+		header: 'Aktionen',
+		cell: ({ row }) =>
+			React.createElement(
+				'div',
+				{ className: 'flex gap-2' },
+				React.createElement(Button, { size: 'sm', onClick: () => alert(`Bearbeite ${row.name}`), children: 'Bearbeiten' }),
+				React.createElement(Button, { size: 'sm', variant: 'tonal', onClick: () => alert(`Lösche ${row.name}`), children: 'Löschen' }),
+			),
+	},
+];
+
+export const WithCustomCells: SimpleDataStory = {
+	args: {
+		data: simpleData,
+		columns: columnsWithCustomCells,
+	},
+};
