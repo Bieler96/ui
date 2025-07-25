@@ -64,6 +64,14 @@ export const Tonal: Story = {
 	},
 };
 
+export const Ghost: Story = {
+	args: {
+		children: 'Ghost Button',
+		variant: 'ghost',
+		size: 'md',
+	},
+};
+
 export const Small: Story = {
 	args: {
 		children: 'Small Button',

@@ -19,7 +19,7 @@ export type DataTableProps<TData> = {
 	cellAlignment?: Alignment;
 };
 
-type HeaderGroup = {
+export type HeaderGroup = {
 	parent: string;
 	children: string[];
 };
@@ -147,7 +147,7 @@ function DataTable<TData extends Record<string, any>>({
 				</thead>
 				<tbody>
 					{data.map((row, idx) => (
-						<tr key={idx} className="transition-colors hover:bg-hover cursor-pointer">
+						<tr key={idx} className="transition-colors hover:bg-hover">
 							{flatColumns.map((col, colIdx) => {
 								const value = getValue(row, col);
 								const isLastRow = idx === data.length - 1;
@@ -202,7 +202,7 @@ function DataTable<TData extends Record<string, any>>({
 				</thead>
 				<tbody>
 					{data.map((row, rowIdx) => (
-						<tr key={rowIdx} className="transition-colors hover:bg-hover cursor-pointer">
+						<tr key={rowIdx} className="transition-colors hover:bg-hover">
 							{columns!.map((column, colIdx) => {
 								const isLastRow = rowIdx === data.length - 1;
 								const isLastCol = colIdx === columns!.length - 1;
