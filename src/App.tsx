@@ -1,65 +1,90 @@
+import { useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
+import Button from './components/button/Button';
 
 interface User {
-	name: string;
-	alter: number;
-	beruf: string;
-	adresse: {
-		stadt: string;
-		plz: string;
+	id: number;
+	firstName: string;
+	lastName: string;
+	maidenName: string;
+	age: number;
+	gender: string;
+	email: string;
+	phone: string;
+	username: string;
+	password: string;
+	birthDate: string;
+	image: string;
+	bloodGroup: string;
+	height: number;
+	weight: number;
+	eyeColor: string;
+	hair: {
+		color: string;
+		type: string;
 	};
 }
 
-const data: User[] = [
-	{
-		name: "Anna",
-		alter: 28,
-		beruf: "Entwicklerin",
-		adresse: { stadt: "Berlin", plz: "10115" },
-	},
-	{
-		name: "Ben",
-		alter: 34,
-		beruf: "Designer",
-		adresse: { stadt: "Hamburg", plz: "20095" },
-	},
-	{
-		name: "Chris",
-		alter: 22,
-		beruf: "Student",
-		adresse: { stadt: "München", plz: "80331" },
-	},
-	{
-		name: "David",
-		alter: 45,
-		beruf: "Manager",
-		adresse: { stadt: "Köln", plz: "50667" },
-	},
-	{
-		name: "Eva",
-		alter: 16,
-		beruf: "Marketing",
-		adresse: { stadt: "Frankfurt", plz: "60311" },
-	},
-];
-
 const columnsWithCustomCells: ColumnDef<User>[] = [
-	{ accessorKey: 'name', header: 'Name' },
+	{ accessorKey: 'id', header: 'ID' },
 	{
-		accessorKey: 'alter',
-		header: 'Alter',
-		cell: ({ row }) => {
-			const age = row.alter;
-			return age >= 18 ? `${age} Jahre` : `${age} Jahre (Minderjährig)`;
-		}
+		accessorKey: 'image',
+		header: 'Bild',
+		cell: ({ row }) => (
+			<div className="w-14 flex items-center justify-center">
+				<img
+					src={row.image}
+					alt={`${row.firstName} ${row.lastName}`}
+					className="size-12"
+				/>
+			</div>
+		)
 	},
-	{ accessorKey: 'beruf', header: 'Beruf' },
-	{ accessorKey: 'adresse', header: 'Adresse' },
-	{ accessorKey: 'adresse.stadt', header: 'Stadt' },
-	{ accessorKey: 'adresse.plz', header: "PLZ" },
+	{ accessorKey: 'firstName', header: 'Vorname' },
+	{ accessorKey: 'lastName', header: 'Nachname' },
+	{ accessorKey: 'maidenName', header: 'Maidenname' },
+	{ accessorKey: 'age', header: 'Alter' },
+	{ accessorKey: 'gender', header: 'Geschlecht' },
+	{ accessorKey: 'email', header: 'E-Mail' },
+	{
+		accessorKey: 'phone',
+		header: 'Telefon',
+		cell: ({ row }) => (
+			<Button variant='ghost' className='text-nowrap'>{row.phone}</Button>
+		)
+	},
+	{ accessorKey: 'username', header: 'Benutzername' },
+	{ accessorKey: 'password', header: 'Passwort' },
+	{ accessorKey: 'birthDate', header: 'Geburtsdatum' },
+	{ accessorKey: 'bloodGroup', header: 'Blutgruppe' },
+	{ accessorKey: 'height', header: 'Größe' },
+	{ accessorKey: 'weight', header: 'Gewicht' },
+	{ accessorKey: 'eyeColor', header: 'Augenfarbe' },
+	{ accessorKey: 'hair', header: 'Haare' },
+	{ accessorKey: 'hair.color', header: 'Haarfarbe' },
+	{ accessorKey: 'hair.type', header: 'Haarart' },
+
 ];
 
 function App() {
+	const [data, setData] = useState<User[]>([]);
+
+	const fetchData = async () => {
+		try {
+			const response = await fetch('https://dummyjson.com/users');
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			const result = await response.json();
+			setData(result.users);
+		} catch (error) {
+			console.error('Fetch error:', error);
+		}
+	};
+
+	fetchData();
+
+
 	return (
 		<div className="p-4">
 			<DataTable
