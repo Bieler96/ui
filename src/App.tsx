@@ -53,7 +53,10 @@ const columnsWithCustomCells: ColumnDef<User>[] = [
 			return age >= 18 ? `${age} Jahre` : `${age} Jahre (Minderjährig)`;
 		}
 	},
-	{ accessorKey: 'beruf', header: 'Beruf' }
+	{ accessorKey: 'beruf', header: 'Beruf' },
+	{ accessorKey: 'adresse', header: 'Adresse' },
+	{ accessorKey: 'adresse.stadt', header: 'Stadt' },
+	{ accessorKey: 'adresse.plz', header: "PLZ" },
 ];
 
 function App() {
@@ -61,8 +64,8 @@ function App() {
 		<div className="p-4">
 			<DataTable
 				data={data}
-				columns={columnsWithCustomCells}
-				cellAlignment={Alignment.CENTER}
+			// columns={columnsWithCustomCells}
+			// cellAlignment={Alignment.CENTER}
 			/>
 		</div>
 	);

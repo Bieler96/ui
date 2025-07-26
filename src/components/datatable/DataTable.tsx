@@ -55,6 +55,26 @@ function getHeaderGroups(data: Array<Record<string, any>>): HeaderGroup[] {
 	}));
 }
 
+function getHeaderGroupsFromColumns<T>(columns: ColumnDef<T>[]): HeaderGroup[] {
+	const groups: Record<string, string[]> = {};
+
+	for (const col of columns) {
+		const path = col.accessorKey as string;
+		const [parent, child] = path.split(".");
+		if (child) {
+			if (!groups[parent]) groups[parent] = [];
+			groups[parent].push(child);
+		} else {
+			if (!groups[parent]) groups[parent] = [];
+		}
+	}
+
+	return Object.entries(groups).map(([parent, children]) => ({
+		parent,
+		children,
+	}));
+}
+
 function getValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
 }
@@ -113,7 +133,20 @@ function DataTable<TData extends Record<string, any>>({
 									colSpan={group.children.length}
 									className={`font-medium px-4 py-3 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} bg-surface-variant text-on-surface border-outline ${roundedClass}`}
 								>
-									{group.parent}
+									{(() => {
+										if (!columns) {
+											return group.parent;
+										}
+										const column = columns.find(col =>
+											col.accessorKey === group.parent ||
+											col.accessorKey === `${group.parent}.${group.children[0]}`
+										);
+										if (!column) {
+											return group.parent;
+										}
+										const header = column.header;
+										return typeof header === "function" ? header({ column }) : header ?? group.parent;
+									})()}
 								</th>
 							) : (
 								<th
@@ -121,7 +154,17 @@ function DataTable<TData extends Record<string, any>>({
 									rowSpan={2}
 									className={`font-medium px-4 py-3 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} align-middle bg-surface-variant text-on-surface border-outline ${roundedClass}`}
 								>
-									{group.parent}
+									{(() => {
+										if (!columns) {
+											return group.parent;
+										}
+										const columnDef = columns.find(col => col.accessorKey === group.parent);
+										if (!columnDef) {
+											return group.parent;
+										}
+										const header = columnDef.header;
+										return typeof header === "function" ? header({ column: columnDef }) : header ?? group.parent;
+									})()}
 								</th>
 							);
 						})}
@@ -169,14 +212,23 @@ function DataTable<TData extends Record<string, any>>({
 		);
 	};
 
-	const renderConfigurableTable = () => {
+	const renderGroupedTable = () => {
+		const headerGroups = getHeaderGroupsFromColumns(columns!);
+		const flatColumns = headerGroups.flatMap(group =>
+			group.children.length > 0
+				? group.children.map(child => `${group.parent}.${child}`)
+				: [group.parent]
+		);
+
 		return (
 			<table className="min-w-full border-separate border-spacing-0 rounded-lg">
 				<thead>
 					<tr>
-						{columns!.map((column, idx) => {
+						{headerGroups.map((group, idx) => {
+							const isLastGroup = idx === headerGroups.length - 1;
+							const shouldHaveBorderR = !isLastGroup;
 							const firstIdx = 0;
-							const lastIdx = columns!.length - 1;
+							const lastIdx = headerGroups.length - 1;
 							const roundedClass =
 								idx === firstIdx && idx === lastIdx
 									? "rounded-tl-lg rounded-tr-lg"
@@ -185,35 +237,86 @@ function DataTable<TData extends Record<string, any>>({
 										: idx === lastIdx
 											? "rounded-tr-lg"
 											: "";
-							const shouldHaveBorderR = idx !== lastIdx;
 
-							return (
+							return group.children.length > 0 ? (
 								<th
-									key={column.accessorKey as string}
+									key={group.parent}
+									colSpan={group.children.length}
 									className={`font-medium px-4 py-3 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} bg-surface-variant text-on-surface border-outline ${roundedClass}`}
 								>
-									{typeof column.header === 'function'
-										? column.header({ column })
-										: column.header}
+									{(() => {
+										const header = columns!.find(col => col.accessorKey === group.parent)?.header;
+										if (typeof header === "function") {
+											return header({ column: columns!.find(col => col.accessorKey === group.parent)! });
+										}
+										return header ?? group.parent;
+									})()}
+								</th>
+							) : (
+								<th
+									key={group.parent}
+									rowSpan={2}
+									className={`font-medium px-4 py-3 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} align-middle bg-surface-variant text-on-surface border-outline ${roundedClass}`}
+								>
+									{(() => {
+										const columnDef = columns!.find(col => col.accessorKey === group.parent);
+										if (!columnDef) {
+											return group.parent;
+										}
+										const header = columnDef.header;
+										// If header is a function, call it with the column definition
+										// Otherwise, return the header directly
+										if (typeof header === "function") {
+											return header({ column: columns!.find(col => col.accessorKey === group.parent)! });
+										}
+									})()}
 								</th>
 							);
 						})}
+					</tr>
+					<tr>
+						{headerGroups.map((group) =>
+							group.children.length > 0
+								? group.children.map((child, idx, arr) => {
+									const isLastCol = idx === arr.length - 1;
+									const shouldHaveBorderR = !isLastCol;
+									return (
+										<th
+											key={`${group.parent}.${child}`}
+											className={`font-normal px-4 py-2 border-b ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(headerAlignment)} bg-surface text-on-surface border-outline-variant`}
+										>
+											{(() => {
+												const header = columns!.find(col => col.accessorKey === `${group.parent}.${child}`)?.header;
+												if (typeof header === "function") {
+													return header({ column: columns!.find(col => col.accessorKey === `${group.parent}.${child}`)! });
+												}
+												return header ?? child;
+											})()}
+										</th>
+									);
+								}) : null
+						)}
 					</tr>
 				</thead>
 				<tbody>
 					{data.map((row, rowIdx) => (
 						<tr key={rowIdx} className="transition-colors hover:bg-hover">
-							{columns!.map((column, colIdx) => {
+							{flatColumns.map((col, colIdx) => {
+								const column = columns!.find(c => c.accessorKey === col);
 								const isLastRow = rowIdx === data.length - 1;
-								const isLastCol = colIdx === columns!.length - 1;
+								const isLastCol = colIdx === flatColumns.length - 1;
 								const shouldHaveBorderR = !isLastCol;
-								const cellContent = column.cell
+								let cellContent = column?.cell
 									? column.cell({ row })
-									: getValue(row, column.accessorKey as string);
+									: getValue(row, col);
+
+								if (typeof cellContent === 'object' && cellContent !== null && !React.isValidElement(cellContent)) {
+									cellContent = JSON.stringify(cellContent);
+								}
 
 								return (
 									<td
-										key={column.accessorKey as string}
+										key={col}
 										className={`px-4 py-3 ${shouldHaveBorderR ? 'border-r' : ''} ${getAlignmentClass(cellAlignment)} text-on-surface border-outline-variant ${isLastRow ? "" : "border-b"}`}
 									>
 										{cellContent}
@@ -229,7 +332,7 @@ function DataTable<TData extends Record<string, any>>({
 
 	return (
 		<div className="overflow-x-auto rounded-lg shadow-sm bg-surface">
-			{columns ? renderConfigurableTable() : renderLegacyTable()}
+			{columns ? renderGroupedTable() : renderLegacyTable()}
 		</div>
 	);
 }
