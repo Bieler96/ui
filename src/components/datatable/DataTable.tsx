@@ -264,11 +264,10 @@ function DataTable<TData extends Record<string, any>>({
 											return group.parent;
 										}
 										const header = columnDef.header;
-										// If header is a function, call it with the column definition
-										// Otherwise, return the header directly
 										if (typeof header === "function") {
 											return header({ column: columns!.find(col => col.accessorKey === group.parent)! });
 										}
+										return header ?? group.parent;
 									})()}
 								</th>
 							);

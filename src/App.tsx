@@ -64,8 +64,8 @@ function App() {
 		<div className="p-4">
 			<DataTable
 				data={data}
-			// columns={columnsWithCustomCells}
-			// cellAlignment={Alignment.CENTER}
+				columns={columnsWithCustomCells}
+				cellAlignment={Alignment.CENTER}
 			/>
 		</div>
 	);
