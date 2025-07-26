@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
+import Item from './components/item/item';
 
 interface User {
 	id: number;
@@ -63,8 +64,14 @@ const columnsWithCustomCells: ColumnDef<User>[] = [
 	{ accessorKey: 'hair', header: 'Haare' },
 	{ accessorKey: 'hair.color', header: 'Haarfarbe' },
 	{ accessorKey: 'hair.type', header: 'Haarart' },
-
 ];
+
+const menuItems = [
+	{ name: 'Home', description: 'Zur Startseite' },
+	{ name: 'Profile', description: 'Profilseite' },
+	{ name: 'Settings', description: 'Einstellungen' },
+	{ name: 'Logout', description: 'Abmelden' }
+]
 
 function App() {
 	const [data, setData] = useState<User[]>([]);
@@ -82,11 +89,24 @@ function App() {
 		}
 	};
 
-	fetchData();
-
+	useEffect(() => {
+		fetchData();
+	}, []);
 
 	return (
 		<div className="p-4">
+			<div className="mb-4">
+				{menuItems.map((item, index) => (
+					<Item
+						key={index}
+						label={item.name}
+						description={item.description}
+						variant={index === 0 ? 'first' : index === menuItems.length - 1 ? 'last' : 'none'}
+						clickable
+					/>
+				))}
+			</div>
+
 			<DataTable
 				data={data}
 				columns={columnsWithCustomCells}

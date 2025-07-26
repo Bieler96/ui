@@ -13,3 +13,7 @@
 	--color-on-primary: #fff;
 	--color-hover: #f1f3f6;
 }
+
+body {
+	@apply bg-surface text-on-surface;
+}
