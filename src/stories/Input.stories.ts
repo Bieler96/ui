@@ -33,3 +33,10 @@ export const Disabled: Story = {
     disabled: true,
   },
 };
+
+export const Ghost: Story = {
+  args: {
+    placeholder: "Ghost input",
+    variant: "ghost",
+  },
+};
