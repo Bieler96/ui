@@ -2,10 +2,11 @@ import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
-import { Crown, HeartPlus, Mail, Phone, PhoneCall, User } from 'lucide-react';
+import { Crown, Delete, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
 import Dialog from './components/dialog/Dialog';
 import CopyButton from './components/copy-button/CopyButton';
 import Popover from './components/popover/Popover';
+import Separator from './components/separator/Separator';
 
 interface User {
 	id: number;
@@ -143,6 +144,15 @@ function App() {
 								}}
 							>
 								<Mail className='size-4 mr-2' /> E-Mail senden
+							</Button>
+							<Separator className="bg-outline-variant my-2" />
+							{/* delete */}
+							<Button
+								variant='ghost'
+								className='justify-start text-error'
+								onClick={() => alert(`Löschen von ${row.firstName} ${row.lastName}`)}
+							>
+								<Trash2 className='size-4 mr-2' /> Löschen
 							</Button>
 						</div>
 					}
