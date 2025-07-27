@@ -2,7 +2,7 @@ import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
-import { Crown, Heart, HeartPlus, Mail, Phone, User } from 'lucide-react';
+import { Crown, HeartPlus, Mail, Phone, User } from 'lucide-react';
 
 interface User {
 	id: number;
