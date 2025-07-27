@@ -1,47 +1,83 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Info } from "lucide-react";
 import Popover from "../components/popover/Popover";
-import Button from "../components/button/Button";
 
 const meta: Meta<typeof Popover> = {
-  title: "components/Popover",
+  title: "Components/Popover",
   component: Popover,
-  tags: ["autodocs"],
-  argTypes: {
-    trigger: { control: { disable: true } },
-    content: { control: { disable: true } },
+  parameters: {
+    layout: "centered",
   },
+  tags: ["autodocs"],
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+type Story = StoryObj<typeof Popover>;
+
+const content = (
+  <div>
+    <h4 className="text-sm font-bold">Popover Titel</h4>
+    <p className="text-sm text-gray-600">Das ist ein Beispiel-Inhalt.</p>
+  </div>
+);
+
+const baseTrigger = (label: string) => (
+  <button className="border rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-2">
+    <Info className="w-4 h-4" />
+    {label}
+  </button>
+);
+
+export const Click: Story = {
+  name: "Click to Open",
   args: {
-    onHover: false,
-    trigger: <Button>Click me</Button>,
-    content: (
-      <div>
-        <h3 className="font-bold">Popover Title</h3>
-        <p className="text-sm">
-          This is the content of the popover. You can put any React node here.
-        </p>
-      </div>
-    ),
+    trigger: baseTrigger("Click mich"),
+    placement: "bottom",
+    content,
   },
 };
 
-export const OnHover: Story = {
+export const Hover: Story = {
+  name: "Hover to Open",
   args: {
+    trigger: baseTrigger("Hover mich"),
+    content,
     onHover: true,
-    trigger: <Button>Hover me</Button>,
-    content: (
-      <div>
-        <h3 className="font-bold">Hover Popover</h3>
-        <p className="text-sm">
-          This popover appears on hover. It has a slight delay before
-          disappearing.
-        </p>
-      </div>
-    ),
+  },
+};
+
+export const PlacementTop: Story = {
+  name: "Placement: Top",
+  args: {
+    trigger: baseTrigger("Oben"),
+    content,
+    placement: "top",
+  },
+};
+
+export const PlacementRightStart: Story = {
+  name: "Placement: Right Start",
+  args: {
+    trigger: baseTrigger("Rechts Start"),
+    content,
+    placement: "right-start",
+  },
+};
+
+export const BottomEdge: Story = {
+  name: "Am unteren Rand (Auto-Flip)",
+  parameters: {
+    layout: "fullscreen",
+  },
+  render: (args) => (
+    <div className="flex h-screen items-end justify-center p-4">
+      <Popover {...args} />
+    </div>
+  ),
+  args: {
+    trigger: baseTrigger("Unten am Rand"),
+    content,
+    placement: "bottom",
   },
 };

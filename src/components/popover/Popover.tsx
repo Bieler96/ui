@@ -1,3 +1,11 @@
+import {
+	useFloating,
+	offset,
+	flip,
+	shift,
+	autoUpdate,
+	type Placement,
+} from "@floating-ui/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
@@ -6,6 +14,7 @@ export interface PopoverProps {
 	content: React.ReactNode;
 	onHover?: boolean;
 	className?: string;
+	placement?: Placement;
 }
 
 function Popover({
@@ -13,26 +22,16 @@ function Popover({
 	content,
 	onHover = false,
 	className,
+	placement = "bottom",
 }: PopoverProps) {
 	const [open, setOpen] = useState(false);
-	const popoverRef = useRef<HTMLDivElement>(null);
 	const timeoutRef = useRef<number | null>(null);
 
-	const handleClickOutside = (event: MouseEvent) => {
-		if (
-			popoverRef.current &&
-			!popoverRef.current.contains(event.target as Node)
-		) {
-			setOpen(false);
-		}
-	};
-
-	useEffect(() => {
-		if (!onHover && open) {
-			document.addEventListener("mousedown", handleClickOutside);
-			return () => document.removeEventListener("mousedown", handleClickOutside);
-		}
-	}, [open, onHover]);
+	const { refs, floatingStyles, update } = useFloating({
+		placement,
+		middleware: [offset(8), flip(), shift()],
+		whileElementsMounted: autoUpdate,
+	});
 
 	const handleMouseEnter = () => {
 		if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
@@ -43,36 +42,57 @@ function Popover({
 		timeoutRef.current = window.setTimeout(() => setOpen(false), 100);
 	};
 
+	useEffect(() => {
+		if (!onHover && open) {
+			const handleClickOutside = (event: MouseEvent) => {
+				if (
+					refs.reference.current instanceof Node &&
+					refs.floating.current instanceof Node &&
+					!refs.reference.current.contains(event.target as Node) &&
+					!refs.floating.current.contains(event.target as Node)
+				) {
+					setOpen(false);
+				}
+			};
+			document.addEventListener("mousedown", handleClickOutside);
+			return () => document.removeEventListener("mousedown", handleClickOutside);
+		}
+	}, [open, onHover, refs]);
+
 	const triggerProps = onHover
 		? {
 			onMouseEnter: handleMouseEnter,
 			onMouseLeave: handleMouseLeave,
 		}
 		: {
-			onClick: () => setOpen(!open),
+			onClick: () => {
+				setOpen((prev) => !prev);
+				update();
+			},
 		};
 
 	return (
-		<div
-			className="relative inline-block"
-			ref={popoverRef}
-			{...(onHover ? { onMouseLeave: handleMouseLeave } : {})}
-		>
-			<div className="cursor-pointer" {...triggerProps}>
+		<div className="relative inline-block">
+			<div
+				ref={refs.setReference}
+				className="cursor-pointer inline-block"
+				{...triggerProps}
+			>
 				{trigger}
 			</div>
 
 			<div
-				onMouseEnter={onHover ? handleMouseEnter : undefined}
-				onMouseLeave={onHover ? handleMouseLeave : undefined}
+				ref={refs.setFloating}
+				style={floatingStyles}
 				className={clsx(
-					"absolute z-10 mt-2 w-64 rounded-xl bg-surface border border-outline p-4 shadow-lg",
-					"transition-all transform duration-150 ease-out",
+					"z-10 w-64 rounded-xl bg-surface border border-outline p-4 shadow-lg transition-all transform duration-200 ease-out",
 					open
 						? "opacity-100 scale-100 pointer-events-auto"
 						: "opacity-0 scale-95 pointer-events-none",
 					className
 				)}
+				onMouseEnter={onHover ? handleMouseEnter : undefined}
+				onMouseLeave={onHover ? handleMouseLeave : undefined}
 			>
 				{content}
 			</div>
