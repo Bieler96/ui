@@ -90,6 +90,7 @@ function Dialog({
 						"bg-surface border border-outline rounded-lg shadow-lg max-w-lg w-full p-6 relative transition-all duration-200 ease-out",
 						animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
 					)}
+					onClick={(e) => e.stopPropagation()}
 				>
 					{children}
 				</div>
