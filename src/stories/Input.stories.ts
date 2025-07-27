@@ -21,9 +21,15 @@ export const Default: Story = {
 };
 
 export const WithLabel: Story = {
-	args: {
-		label: "Name",
-		placeholder: "Enter your name",
-		id: "name-input"
-	},
+  args: {
+    label: "Name",
+    placeholder: "Enter your name",
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    placeholder: "Disabled input",
+    disabled: true,
+  },
 };
