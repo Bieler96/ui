@@ -1,0 +1,24 @@
+import clsx from "clsx";
+
+export interface SkeletonProps {
+	delay?: number;
+	className?: string;
+}
+
+function Skeleton({
+	delay = 0,
+	className,
+	...props
+}: SkeletonProps) {
+	const randomDelay = Math.floor(Math.random() * delay);
+
+	return (
+		<div
+			className={clsx(`bg-primary animate-pulse rounded-md`, className)}
+			style={{ animationDelay: `${randomDelay}ms` }}
+			{...props}
+		></div>
+	);
+}
+
+export default Skeleton;

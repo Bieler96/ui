@@ -12,6 +12,11 @@
 	--color-primary-container: #eaddff;
 	--color-on-primary: #fff;
 	--color-hover: #f1f3f6;
+
+	--color-info: #2196f3;
+	--color-success: #4caf50;
+	--color-warning: #ff9800;
+	--color-error: #f44336;
 }
 
 body {

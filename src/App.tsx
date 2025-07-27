@@ -1,10 +1,12 @@
+import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
-import Item from './components/item/item';
+import { Crown, Heart, HeartPlus, Mail, Phone, User } from 'lucide-react';
 
 interface User {
 	id: number;
+	role: string;
 	firstName: string;
 	lastName: string;
 	maidenName: string;
@@ -29,6 +31,19 @@ interface User {
 const columnsWithCustomCells: ColumnDef<User>[] = [
 	{ accessorKey: 'id', header: 'ID' },
 	{
+		accessorKey: 'role',
+		header: 'Rolle',
+		cell: ({ row }) => {
+			if (row.role === 'admin') {
+				return <span className='flex items-center gap-1'><Crown className='text-primary' />{row.role}</span>;
+			}
+			if (row.role === 'moderator') {
+				return <span className='flex items-center gap-1'><HeartPlus className='text-error' />{row.role}</span>;
+			}
+			return <span className='flex items-center gap-1'><User className='text-info' />{row.role}</span>;
+		}
+	},
+	{
 		accessorKey: 'image',
 		header: 'Bild',
 		cell: ({ row }) => (
@@ -46,12 +61,26 @@ const columnsWithCustomCells: ColumnDef<User>[] = [
 	{ accessorKey: 'maidenName', header: 'Maidenname' },
 	{ accessorKey: 'age', header: 'Alter' },
 	{ accessorKey: 'gender', header: 'Geschlecht' },
-	{ accessorKey: 'email', header: 'E-Mail' },
+	{
+		accessorKey: 'email',
+		header: 'E-Mail',
+		cell: ({ row }) => (
+			<div className="w-full flex items-start">
+				<Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`mailto:${row.email}`)}>
+					<Mail className='size-4' /> {row.email}
+				</Button>
+			</div>
+		)
+	},
 	{
 		accessorKey: 'phone',
 		header: 'Telefon',
 		cell: ({ row }) => (
-			<Button variant='ghost' className='text-nowrap'>{row.phone}</Button>
+			<div className="w-full flex items-start">
+				<Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`tel:${row.phone}`)}>
+					<Phone className='size-4' /> {row.phone}
+				</Button>
+			</div>
 		)
 	},
 	{ accessorKey: 'username', header: 'Benutzername' },
@@ -66,24 +95,19 @@ const columnsWithCustomCells: ColumnDef<User>[] = [
 	{ accessorKey: 'hair.type', header: 'Haarart' },
 ];
 
-const menuItems = [
-	{ name: 'Home', description: 'Zur Startseite' },
-	{ name: 'Profile', description: 'Profilseite' },
-	{ name: 'Settings', description: 'Einstellungen' },
-	{ name: 'Logout', description: 'Abmelden' }
-]
-
 function App() {
 	const [data, setData] = useState<User[]>([]);
 
 	const fetchData = async () => {
 		try {
-			const response = await fetch('https://dummyjson.com/users');
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-			const result = await response.json();
-			setData(result.users);
+			setTimeout(async () => {
+				const response = await fetch('https://dummyjson.com/users');
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const result = await response.json();
+				setData(result.users);
+			}, 0); // Simulate loading delay
 		} catch (error) {
 			console.error('Fetch error:', error);
 		}
@@ -93,25 +117,23 @@ function App() {
 		fetchData();
 	}, []);
 
+	const isLoading = data.length === 0;
+
 	return (
 		<div className="p-4">
-			<div className="mb-4">
-				{menuItems.map((item, index) => (
-					<Item
-						key={index}
-						label={item.name}
-						description={item.description}
-						variant={index === 0 ? 'first' : index === menuItems.length - 1 ? 'last' : 'none'}
-						clickable
-					/>
-				))}
-			</div>
-
-			<DataTable
-				data={data}
-				columns={columnsWithCustomCells}
-				cellAlignment={Alignment.CENTER}
-			/>
+			{isLoading ? (
+				<div className="space-y-2">
+					{Array.from({ length: 10 }).map((_, i) => (
+						<Skeleton key={i} className={"h-10 w-full"} delay={i * 100} />
+					))}
+				</div>
+			) : (
+				<DataTable
+					data={data}
+					columns={columnsWithCustomCells}
+					cellAlignment={Alignment.CENTER}
+				/>
+			)}
 		</div>
 	);
 }
