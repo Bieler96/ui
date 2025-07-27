@@ -67,7 +67,7 @@ function Popover({
 				onMouseLeave={onHover ? handleMouseLeave : undefined}
 				className={clsx(
 					"absolute z-10 mt-2 w-64 rounded-xl bg-surface border border-outline p-4 shadow-lg",
-					"transition-all transform duration-200 ease-out",
+					"transition-all transform duration-150 ease-out",
 					open
 						? "opacity-100 scale-100 pointer-events-auto"
 						: "opacity-0 scale-95 pointer-events-none",
