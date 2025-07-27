@@ -1,5 +1,6 @@
 import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
+import { useToast } from './hooks/useToast';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
 import { Crown, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
@@ -7,6 +8,7 @@ import Dialog from './components/dialog/Dialog';
 import CopyButton from './components/copy-button/CopyButton';
 import Popover from './components/popover/Popover';
 import Separator from './components/separator/Separator';
+import { Toaster } from './components/toaster/Toaster';
 
 interface User {
 	id: number;
@@ -168,6 +170,8 @@ function App() {
 	const [selectedUserData, setSelectedUserData] = useState<User | undefined>(undefined);
 	const [dialogType, setDialogType] = useState<'call' | 'email'>('call');
 
+	const { toast } = useToast();
+
 	const fetchData = async () => {
 		try {
 			setTimeout(async () => {
@@ -177,6 +181,7 @@ function App() {
 				}
 				const result = await response.json();
 				setData(result.users);
+				toast.success('Daten erfolgreich geladen!');
 			}, 0); // Simulate loading delay
 		} catch (error) {
 			console.error('Fetch error:', error);
@@ -191,6 +196,7 @@ function App() {
 
 	return (
 		<div className="p-4">
+			<Toaster />
 			<Dialog
 				open={isDialogOpen}
 				onClose={() => {
@@ -243,6 +249,8 @@ function ExampleCallDialog({ userData }: { userData: User }) {
 }
 
 function ExampleEmailDialog({ userData }: { userData: User }) {
+	const { toast } = useToast();
+
 	return (
 		<div className="text-center">
 			<div className="size-16 bg-primary flex items-center justify-center rounded-full mb-4 m-auto">
@@ -255,7 +263,10 @@ function ExampleEmailDialog({ userData }: { userData: User }) {
 					className="w-full"
 					onClick={() => window.open(`mailto:${userData.email}`)}
 				>E-Mail senden</Button>
-				<CopyButton text={userData.email} />
+				<CopyButton
+					text={userData.email}
+					successulCallback={() => toast.success('E-Mail-Adresse kopiert!')}
+				/>
 			</div>
 		</div>
 	);
