@@ -17,7 +17,7 @@ function Button({
 	className,
 	...props
 }: ButtonProps) {
-	const base = " cursor-pointer inline-flex items-center justify-center font-medium rounded-full transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none";
+	const base = " cursor-pointer inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none";
 	const sizes = {
 		sm: "h-10 md:h-9 px-4 text-sm",
 		md: "h-12 md:h-10 px-6 text-base",

@@ -2,8 +2,9 @@ import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
-import { Crown, HeartPlus, Mail, Phone, User } from 'lucide-react';
+import { Crown, HeartPlus, Mail, Phone, PhoneCall, User } from 'lucide-react';
 import Dialog from './components/dialog/Dialog';
+import CopyButton from './components/copy-button/CopyButton';
 
 interface User {
 	id: number;
@@ -29,75 +30,94 @@ interface User {
 	};
 }
 
-const columnsWithCustomCells: ColumnDef<User>[] = [
-	{ accessorKey: 'id', header: 'ID' },
-	{
-		accessorKey: 'role',
-		header: 'Rolle',
-		cell: ({ row }) => {
-			if (row.role === 'admin') {
-				return <span className='flex items-center gap-1'><Crown className='text-primary' />{row.role}</span>;
-			}
-			if (row.role === 'moderator') {
-				return <span className='flex items-center gap-1'><HeartPlus className='text-error' />{row.role}</span>;
-			}
-			return <span className='flex items-center gap-1'><User className='text-info' />{row.role}</span>;
-		}
-	},
-	{
-		accessorKey: 'image',
-		header: 'Bild',
-		cell: ({ row }) => (
-			<div className="w-14 flex items-center justify-center">
-				<img
-					src={row.image}
-					alt={`${row.firstName} ${row.lastName}`}
-					className="size-12"
-				/>
-			</div>
-		)
-	},
-	{ accessorKey: 'firstName', header: 'Vorname' },
-	{ accessorKey: 'lastName', header: 'Nachname' },
-	{ accessorKey: 'maidenName', header: 'Maidenname' },
-	{ accessorKey: 'age', header: 'Alter' },
-	{ accessorKey: 'gender', header: 'Geschlecht' },
-	{
-		accessorKey: 'email',
-		header: 'E-Mail',
-		cell: ({ row }) => (
-			<div className="w-full flex items-start">
-				<Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`mailto:${row.email}`)}>
-					<Mail className='size-4' /> {row.email}
-				</Button>
-			</div>
-		)
-	},
-	{
-		accessorKey: 'phone',
-		header: 'Telefon',
-		cell: ({ row }) => (
-			<div className="w-full flex items-start">
-				<Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`tel:${row.phone}`)}>
-					<Phone className='size-4' /> {row.phone}
-				</Button>
-			</div>
-		)
-	},
-	{ accessorKey: 'username', header: 'Benutzername' },
-	{ accessorKey: 'password', header: 'Passwort' },
-	{ accessorKey: 'birthDate', header: 'Geburtsdatum' },
-	{ accessorKey: 'bloodGroup', header: 'Blutgruppe' },
-	{ accessorKey: 'height', header: 'Größe' },
-	{ accessorKey: 'weight', header: 'Gewicht' },
-	{ accessorKey: 'eyeColor', header: 'Augenfarbe' },
-	{ accessorKey: 'hair', header: 'Haare' },
-	{ accessorKey: 'hair.color', header: 'Haarfarbe' },
-	{ accessorKey: 'hair.type', header: 'Haarart' },
-];
 
 function App() {
+	const columnsWithCustomCells: ColumnDef<User>[] = [
+		{ accessorKey: 'id', header: 'ID' },
+		{
+			accessorKey: 'role',
+			header: 'Rolle',
+			cell: ({ row }) => {
+				if (row.role === 'admin') {
+					return <span className='flex items-center gap-1'><Crown className='text-primary' />{row.role}</span>;
+				}
+				if (row.role === 'moderator') {
+					return <span className='flex items-center gap-1'><HeartPlus className='text-error' />{row.role}</span>;
+				}
+				return <span className='flex items-center gap-1'><User className='text-info' />{row.role}</span>;
+			}
+		},
+		{
+			accessorKey: 'image',
+			header: 'Bild',
+			cell: ({ row }) => (
+				<div className="w-14 flex items-center justify-center">
+					<img
+						src={row.image}
+						alt={`${row.firstName} ${row.lastName}`}
+						className="size-12"
+					/>
+				</div>
+			)
+		},
+		{ accessorKey: 'firstName', header: 'Vorname' },
+		{ accessorKey: 'lastName', header: 'Nachname' },
+		{ accessorKey: 'maidenName', header: 'Maidenname' },
+		{ accessorKey: 'age', header: 'Alter' },
+		{ accessorKey: 'gender', header: 'Geschlecht' },
+		{
+			accessorKey: 'email',
+			header: 'E-Mail',
+			cell: ({ row }) => (
+				<div className="w-full flex items-start">
+					{/* <Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`mailto:${row.email}`)}> */}
+					<Button
+						variant='ghost'
+						className='text-nowrap flex items-center gap-1'
+						onClick={() => {
+							setDialogType('email');
+							setIsDialogOpen(true);
+							setSelectedUserData(row);
+						}}>
+						<Mail className='size-4' /> {row.email}
+					</Button>
+				</div>
+			)
+		},
+		{
+			accessorKey: 'phone',
+			header: 'Telefon',
+			cell: ({ row }) => (
+				<div className="w-full flex items-start">
+					{/* <Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`tel:${row.phone}`)}> */}
+					<Button
+						variant='ghost'
+						className='text-nowrap flex items-center gap-1'
+						onClick={() => {
+							setDialogType('call');
+							setIsDialogOpen(true);
+							setSelectedUserData(row);
+						}}>
+						<Phone className='size-4' /> {row.phone}
+					</Button>
+				</div>
+			)
+		},
+		{ accessorKey: 'username', header: 'Benutzername' },
+		{ accessorKey: 'password', header: 'Passwort' },
+		{ accessorKey: 'birthDate', header: 'Geburtsdatum' },
+		{ accessorKey: 'bloodGroup', header: 'Blutgruppe' },
+		{ accessorKey: 'height', header: 'Größe' },
+		{ accessorKey: 'weight', header: 'Gewicht' },
+		{ accessorKey: 'eyeColor', header: 'Augenfarbe' },
+		{ accessorKey: 'hair', header: 'Haare' },
+		{ accessorKey: 'hair.color', header: 'Haarfarbe' },
+		{ accessorKey: 'hair.type', header: 'Haarart' },
+	];
 	const [data, setData] = useState<User[]>([]);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [selectedUserData, setSelectedUserData] = useState<User | undefined>(undefined);
+	const [dialogType, setDialogType] = useState<'call' | 'email'>('call');
 
 	const fetchData = async () => {
 		try {
@@ -119,20 +139,25 @@ function App() {
 	}, []);
 
 	const isLoading = data.length === 0;
-	const [open, setOpen] = useState(false);
 
 	return (
 		<div className="p-4">
 			<div className='mb-4'>
-				<Button onClick={() => setOpen(true)}>Dialog öffnen</Button>
+				<Button onClick={() => setIsDialogOpen(true)}>Dialog öffnen</Button>
 
 				<Dialog
-					open={open}
-					onClose={() => setOpen(false)}
-					// classNameOverlay="bg-linear-to-b! from-primary/10 to-transparent"
-					classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!"
+					open={isDialogOpen}
+					onClose={() => {
+						setIsDialogOpen(false);
+					}}
+					classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!" // This line seems to be the issue.
 				>
-					<p>Hier steht der Dialog-Inhalt.</p>
+					{selectedUserData &&
+						(dialogType === 'call' ?
+							<ExampleCallDialog userData={selectedUserData} /> :
+							<ExampleEmailDialog userData={selectedUserData} />
+						)
+					}
 				</Dialog>
 			</div>
 
@@ -149,6 +174,44 @@ function App() {
 					cellAlignment={Alignment.CENTER}
 				/>
 			)}
+		</div>
+	);
+}
+
+function ExampleCallDialog({ userData }: { userData: User }) {
+	return (
+		<div className="text-center">
+			<div className="size-16 bg-primary flex items-center justify-center rounded-full mb-4 m-auto">
+				<PhoneCall className="text-on-primary" />
+			</div>
+			<h1 className="text-xl font-semibold mb-2">{userData.firstName} {userData.lastName}</h1>
+			{userData && <p>Calling: {userData.phone}</p>}
+			<div className="flex items-center gap-1 mt-4">
+				<Button
+					className="w-full"
+					onClick={() => alert(`Calling ${userData.phone}`)}
+				>Anrufen</Button>
+				<CopyButton text={userData.phone} />
+			</div>
+		</div>
+	);
+}
+
+function ExampleEmailDialog({ userData }: { userData: User }) {
+	return (
+		<div className="text-center">
+			<div className="size-16 bg-primary flex items-center justify-center rounded-full mb-4 m-auto">
+				<Mail className="text-on-primary" />
+			</div>
+			<h1 className="text-xl font-semibold mb-2">{userData.firstName} {userData.lastName}</h1>
+			{userData && <p><span className="font-semibold">Email:</span> {userData.email}</p>}
+			<div className="flex items-center gap-1 mt-4">
+				<Button
+					className="w-full"
+					onClick={() => window.open(`mailto:${userData.email}`)}
+				>E-Mail senden</Button>
+				<CopyButton text={userData.email} />
+			</div>
 		</div>
 	);
 }
