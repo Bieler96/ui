@@ -14,7 +14,7 @@ function Skeleton({
 
 	return (
 		<div
-			className={clsx(`bg-primary animate-pulse rounded-md`, className)}
+			className={clsx(`bg-primary animate-pulse rounded-lg`, className)}
 			style={{ animationDelay: `${randomDelay}ms` }}
 			{...props}
 		></div>

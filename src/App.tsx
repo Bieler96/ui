@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
 import { Crown, HeartPlus, Mail, Phone, User } from 'lucide-react';
+import Dialog from './components/dialog/Dialog';
 
 interface User {
 	id: number;
@@ -118,9 +119,23 @@ function App() {
 	}, []);
 
 	const isLoading = data.length === 0;
+	const [open, setOpen] = useState(false);
 
 	return (
 		<div className="p-4">
+			<div className='mb-4'>
+				<Button onClick={() => setOpen(true)}>Dialog öffnen</Button>
+
+				<Dialog
+					open={open}
+					onClose={() => setOpen(false)}
+					// classNameOverlay="bg-linear-to-b! from-primary/10 to-transparent"
+					classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!"
+				>
+					<p>Hier steht der Dialog-Inhalt.</p>
+				</Dialog>
+			</div>
+
 			{isLoading ? (
 				<div className="space-y-2">
 					{Array.from({ length: 10 }).map((_, i) => (
