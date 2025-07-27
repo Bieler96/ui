@@ -2,7 +2,7 @@ import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
-import { Crown, Delete, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
+import { Crown, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
 import Dialog from './components/dialog/Dialog';
 import CopyButton from './components/copy-button/CopyButton';
 import Popover from './components/popover/Popover';
@@ -123,6 +123,8 @@ function App() {
 					}
 					content={
 						<div className="flex flex-col gap-1">
+							<div className="text-left font-semibold ms-2"><span className="text-on-surface/50 font-normal">#{row.id}</span> {row.firstName} {row.lastName}</div>
+							<Separator className="bg-outline-variant my-1" />
 							<Button
 								variant='ghost'
 								className='justify-start'
@@ -145,7 +147,7 @@ function App() {
 							>
 								<Mail className='size-4 mr-2' /> E-Mail senden
 							</Button>
-							<Separator className="bg-outline-variant my-2" />
+							<Separator className="bg-outline-variant my-1" />
 							{/* delete */}
 							<Button
 								variant='ghost'
@@ -189,24 +191,20 @@ function App() {
 
 	return (
 		<div className="p-4">
-			<div className='mb-4'>
-				<Button onClick={() => setIsDialogOpen(true)}>Dialog öffnen</Button>
-
-				<Dialog
-					open={isDialogOpen}
-					onClose={() => {
-						setIsDialogOpen(false);
-					}}
-					classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!" // This line seems to be the issue.
-				>
-					{selectedUserData &&
-						(dialogType === 'call' ?
-							<ExampleCallDialog userData={selectedUserData} /> :
-							<ExampleEmailDialog userData={selectedUserData} />
-						)
-					}
-				</Dialog>
-			</div>
+			<Dialog
+				open={isDialogOpen}
+				onClose={() => {
+					setIsDialogOpen(false);
+				}}
+				classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!" // This line seems to be the issue.
+			>
+				{selectedUserData &&
+					(dialogType === 'call' ?
+						<ExampleCallDialog userData={selectedUserData} /> :
+						<ExampleEmailDialog userData={selectedUserData} />
+					)
+				}
+			</Dialog>
 
 			{isLoading ? (
 				<div className="space-y-2">
