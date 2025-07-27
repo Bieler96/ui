@@ -5,6 +5,7 @@ import Button from './components/button/Button';
 import { Crown, HeartPlus, Mail, Phone, PhoneCall, User } from 'lucide-react';
 import Dialog from './components/dialog/Dialog';
 import CopyButton from './components/copy-button/CopyButton';
+import Popover from './components/popover/Popover';
 
 interface User {
 	id: number;
@@ -113,6 +114,42 @@ function App() {
 		{ accessorKey: 'hair', header: 'Haare' },
 		{ accessorKey: 'hair.color', header: 'Haarfarbe' },
 		{ accessorKey: 'hair.type', header: 'Haarart' },
+		{
+			accessorKey: 'actions', header: '', cell: ({ row }) => (
+				<Popover
+					trigger={
+						<Button variant='ghost'>Aktionen</Button>
+					}
+					content={
+						<div className="flex flex-col gap-1">
+							<Button
+								variant='ghost'
+								className='justify-start'
+								onClick={() => {
+									setDialogType('call');
+									setIsDialogOpen(true);
+									setSelectedUserData(row);
+								}}
+							>
+								<PhoneCall className='size-4 mr-2' /> Anrufen
+							</Button>
+							<Button
+								variant='ghost'
+								className='justify-start'
+								onClick={() => {
+									setDialogType('email');
+									setIsDialogOpen(true);
+									setSelectedUserData(row);
+								}}
+							>
+								<Mail className='size-4 mr-2' /> E-Mail senden
+							</Button>
+						</div>
+					}
+				/>
+			)
+		}
+
 	];
 	const [data, setData] = useState<User[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
