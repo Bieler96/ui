@@ -65,7 +65,3 @@
 body {
 	@apply bg-surface text-on-surface;
 }
-
-.button-group {
-  display: flex;
-}
