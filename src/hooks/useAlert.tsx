@@ -10,35 +10,36 @@ type UseAlertReturn = {
 };
 
 export const useAlert = (): UseAlertReturn => {
-  const [options, setOptions] = useState<AlertOptions | null>(null);
-  const [resolve, setResolve] = useState<(() => void) | null>(null);
+	const [options, setOptions] = useState<AlertOptions | null>(null);
+	const [resolve, setResolve] = useState<(() => void) | null>(null);
+	const [open, setOpen] = useState(false);
 
-  const alert = useCallback((opts: AlertOptions): Promise<void> => {
-    return new Promise<void>((res) => {
-      setOptions(opts);
-      setResolve(() => res);
-    });
-  }, []);
+	const alert = useCallback((opts: AlertOptions): Promise<void> => {
+		return new Promise<void>((res) => {
+			setOptions(opts);
+			setOpen(true);
+			setResolve(() => res);
+		});
+	}, []);
 
-  const handleClose = () => {
-    if (resolve) {
-      resolve();
-    }
-    setOptions(null);
-  };
+	const handleClose = () => {
+		setOpen(false);
+		setTimeout(() => {
+			if (resolve) {
+				resolve();
+			}
+			setOptions(null);
+		}, 200);
+	};
 
-  const AlertDialog = useCallback(() => {
-    if (!options) {
-      return null;
-    }
-    return (
-      <Alert
-        open={options !== null}
-        onClose={handleClose}
-        {...options}
-      />
-    );
-  }, [options]);
+	const AlertDialog = useCallback(() => {
+		if (!options) {
+			return null;
+		}
+		return (
+			<Alert open={open} onClose={handleClose} {...options} />
+		);
+	}, [options, open]);
 
-  return { alert, AlertDialog };
+	return { alert, AlertDialog };
 };
