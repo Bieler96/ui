@@ -22,7 +22,7 @@ function Tooltip({
 			onHover
 			placement={placement}
 			className={clsx(
-				"w-auto px-2 py-1 text-sm pointer-events-none",
+				"px-2 py-1 text-sm pointer-events-none",
 				className
 			)}
 		/>

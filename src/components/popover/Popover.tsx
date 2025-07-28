@@ -85,7 +85,7 @@ function Popover({
 				ref={refs.setFloating}
 				style={floatingStyles}
 				className={clsx(
-					"z-10 w-64 rounded-xl bg-surface border border-outline p-2 shadow-lg transition-all transform duration-200 ease-out",
+					"z-10 w-64 rounded-lg bg-surface border border-outline p-2 shadow-lg transition-all transform duration-200 ease-out",
 					open
 						? "opacity-100 scale-100 pointer-events-auto"
 						: "opacity-0 scale-95 pointer-events-none",
