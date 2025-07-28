@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Confirm } from './Confirm';
 import { useState } from 'react';
-import { Button } from '../button/Button';
+import { Confirm } from '../components/confirm/Confirm';
+import Button from '../components/button/Button';
 
 const meta: Meta<typeof Confirm> = {
   title: 'Components/Confirm',
