@@ -5,7 +5,7 @@ export interface DialogProps {
 	open: boolean;
 	onClose: () => void;
 	children: ReactNode;
-	classNameOverlay: string | undefined
+	classNameOverlay?: string | undefined
 }
 
 function Dialog({

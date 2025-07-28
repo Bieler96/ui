@@ -1,6 +1,7 @@
 import Skeleton from './components/skeleton/Skeleton';
 import { useEffect, useState } from 'react';
 import { useToast } from './hooks/useToast';
+import { useConfirm } from './hooks/useConfirm';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
 import Button from './components/button/Button';
 import { Crown, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
@@ -154,7 +155,19 @@ function App() {
 							<Button
 								variant='ghost'
 								className='justify-start text-error'
-								onClick={() => alert(`Löschen von ${row.firstName} ${row.lastName}`)}
+								onClick={async () => {
+									const confirmed = await confirm({
+										title: 'Benutzer löschen',
+										message: `Möchten Sie ${row.firstName} ${row.lastName} wirklich löschen?`,
+										confirmText: 'Löschen',
+										cancelText: 'Abbrechen',
+									});
+									if (confirmed) {
+										toast.success(`${row.firstName} ${row.lastName} wurde gelöscht.`);
+									} else {
+										toast.info(`${row.firstName} ${row.lastName} wurde nicht gelöscht.`);
+									}
+								}}
 							>
 								<Trash2 className='size-4 mr-2' /> Löschen
 							</Button>
@@ -171,6 +184,7 @@ function App() {
 	const [dialogType, setDialogType] = useState<'call' | 'email'>('call');
 
 	const { toast } = useToast();
+	const { confirm, ConfirmationDialog } = useConfirm();
 
 	const fetchData = async () => {
 		try {
@@ -197,6 +211,7 @@ function App() {
 	return (
 		<div className="p-4">
 			<Toaster />
+			<ConfirmationDialog />
 			<Dialog
 				open={isDialogOpen}
 				onClose={() => {
