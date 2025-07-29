@@ -138,7 +138,7 @@ function CommandMenu({
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="relative p-4">
-						<Search className="absolute left-7 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+						<Search className="absolute left-7 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/50" />
 						<Input
 							ref={inputRef}
 							placeholder="Search..."
