@@ -15,7 +15,8 @@
 		"lint": "eslint .",
 		"preview": "vite preview",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"update-package": "npm run build && npm run publish"
 	},
 	"dependencies": {
 		"@floating-ui/react": "^0.27.14",
