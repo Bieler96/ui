@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import Input from "../input/Input";
@@ -20,7 +20,7 @@ export interface CommandMenuProps {
 	groups: CommandMenuGroupType[];
 }
 
-export const CommandMenu: React.FC<CommandMenuProps> = ({ groups }) => {
+function CommandMenu({ groups }: CommandMenuProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [animateIn, setAnimateIn] = useState(false);
@@ -29,7 +29,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ groups }) => {
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	const allItems = useMemo(() => groups.flatMap(group => group.items), [groups]);
+	// const allItems = useMemo(() => groups.flatMap(group => group.items), [groups]);
 
 	const filteredItems = useMemo(() => {
 		if (!searchQuery) return groups;
@@ -173,3 +173,5 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ groups }) => {
 		</>
 	);
 };
+
+export default CommandMenu;
