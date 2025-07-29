@@ -1,25 +1,27 @@
-import { useState, useEffect, useRef } from 'react';
-import clsx from 'clsx';
-import { Search } from 'lucide-react';
-import Input from '../input/Input';
-import { CommandMenuItem } from './CommandMenuItem';
+import React, { useState, useEffect, useRef } from "react";
+import clsx from "clsx";
+import { Search } from "lucide-react";
+import Input from "../input/Input";
+import { CommandMenuItem } from "./CommandMenuItem";
 
-const CommandMenu = () => {
+export interface CommandMenuItemType {
+	id: string;
+	title: string;
+	onSelect: () => void;
+}
+
+export interface CommandMenuProps {
+	items: CommandMenuItemType[];
+}
+
+export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [animateIn, setAnimateIn] = useState(false);
-	const [searchQuery, setSearchQuery] = useState('');
+	const [searchQuery, setSearchQuery] = useState("");
 	const [activeIndex, setActiveIndex] = useState(0);
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
-
-	const items = [
-		{ title: 'Search' },
-		{ title: 'Settings' },
-		{ title: 'Profile' },
-		{ title: 'Dashboard' },
-		{ title: 'Logout' },
-	];
 
 	const filteredItems = items.filter(item =>
 		item.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -33,21 +35,26 @@ const CommandMenu = () => {
 		}, 200);
 	};
 
+	const handleSelect = (item: CommandMenuItemType) => {
+		item.onSelect();
+		handleClose();
+	}
+
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
-			if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 				e.preventDefault();
 				if (!isOpen) setIsOpen(true); else handleClose();
 			}
 			if (isOpen) {
-				if (e.key === 'Escape') handleClose();
-				else if (e.key === 'ArrowDown') {
+				if (e.key === "Escape") handleClose();
+				else if (e.key === "ArrowDown") {
 					e.preventDefault();
 					setActiveIndex((prev) => (prev + 1) % filteredItems.length);
-				} else if (e.key === 'ArrowUp') {
+				} else if (e.key === "ArrowUp") {
 					e.preventDefault();
 					setActiveIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
-				} else if (e.key === 'Enter') {
+				} else if (e.key === "Enter") {
 					e.preventDefault();
 					if (listRef.current[activeIndex]) {
 						listRef.current[activeIndex]?.click();
@@ -55,8 +62,8 @@ const CommandMenu = () => {
 				}
 			}
 		};
-		document.addEventListener('keydown', down);
-		return () => document.removeEventListener('keydown', down);
+		document.addEventListener("keydown", down);
+		return () => document.removeEventListener("keydown", down);
 	}, [isOpen, activeIndex, filteredItems.length]);
 
 	useEffect(() => {
@@ -70,7 +77,7 @@ const CommandMenu = () => {
 				inputRef.current?.focus();
 			});
 			setActiveIndex(0);
-			setSearchQuery('');
+			setSearchQuery("");
 		}
 	}, [isMounted]);
 
@@ -79,14 +86,14 @@ const CommandMenu = () => {
 	}, [searchQuery]);
 
 	useEffect(() => {
-		if (isMounted) document.body.style.overflow = 'hidden';
-		else document.body.style.overflow = '';
-		return () => { document.body.style.overflow = ''; };
+		if (isMounted) document.body.style.overflow = "hidden";
+		else document.body.style.overflow = "";
+		return () => { document.body.style.overflow = ""; };
 	}, [isMounted]);
 
 	useEffect(() => {
 		if (isMounted && listRef.current[activeIndex]) {
-			listRef.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+			listRef.current[activeIndex]?.scrollIntoView({ block: "nearest" });
 		}
 	}, [isMounted, activeIndex]);
 
@@ -95,7 +102,7 @@ const CommandMenu = () => {
 	return (
 		<>
 			<div
-				className={clsx('fixed inset-0 bg-black/50 bg-opacity-50 backdrop-blur-sm z-40 transition-opacity duration-200', animateIn ? 'opacity-100' : 'opacity-0')}
+				className={clsx("fixed inset-0 bg-black/50 bg-opacity-50 backdrop-blur-sm z-40 transition-opacity duration-200", animateIn ? "opacity-100" : "opacity-0")}
 				onClick={handleClose}
 			/>
 			<div
@@ -103,7 +110,7 @@ const CommandMenu = () => {
 				onClick={handleClose}
 			>
 				<div
-					className={clsx('bg-surface border border-outline rounded-lg shadow-lg max-w-lg w-full relative transition-all duration-200 ease-out', animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}
+					className={clsx("bg-surface border border-outline rounded-lg shadow-lg max-w-lg w-full relative transition-all duration-200 ease-out", animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12")}
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="relative p-4">
@@ -122,10 +129,10 @@ const CommandMenu = () => {
 								<p className="text-sm text-gray-500 px-2 pb-2">Suggestions</p>
 								{filteredItems.map((item, index) => (
 									<CommandMenuItem
-										key={item.title}
+										key={item.id}
 										ref={(el) => { listRef.current[index] = el; }}
 										isActive={activeIndex === index}
-										onSelect={handleClose}
+										onSelect={() => handleSelect(item)}
 									>
 										<p>{item.title}</p>
 									</CommandMenuItem>
@@ -140,5 +147,3 @@ const CommandMenu = () => {
 		</>
 	);
 };
-
-export default CommandMenu;

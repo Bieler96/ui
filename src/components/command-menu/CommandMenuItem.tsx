@@ -24,5 +24,3 @@ export const CommandMenuItem = React.forwardRef<HTMLLIElement, CommandMenuItemPr
 		</li>
 	);
 });
-
-CommandMenuItem.displayName = "CommandMenuItem";
