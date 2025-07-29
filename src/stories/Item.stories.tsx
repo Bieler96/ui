@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import Item from '../components/item/item';
+import Item from '../components/item/Item';
 
 const meta: Meta<typeof Item> = {
 	title: 'Components/Item',

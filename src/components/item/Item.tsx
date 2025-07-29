@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 
-interface ItemProps {
+export interface ItemProps {
 	label: string;
 	description?: string;
 	leadingContent?: React.ReactNode;

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dialog } from "../components/dialog/Dialog";
+import { useState } from "react";
+import Dialog from "../components/dialog/Dialog";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof Dialog> = {
@@ -24,7 +24,7 @@ export const Default: Story = {
 					Dialog öffnen
 				</button>
 
-				<Dialog open={open} onClose={() => setOpen(false)} title="Dialog Beispiel">
+				<Dialog open={open} onClose={() => setOpen(false)}>
 					<p>Das ist ein einfacher Dialog Inhalt.</p>
 				</Dialog>
 			</>
