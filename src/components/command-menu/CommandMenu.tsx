@@ -17,10 +17,14 @@ export interface CommandMenuGroupType {
 }
 
 export interface CommandMenuProps {
-	groups: CommandMenuGroupType[];
+	groups?: CommandMenuGroupType[];
+	items?: CommandMenuItemType[];
 }
 
-function CommandMenu({ groups }: CommandMenuProps) {
+function CommandMenu({
+	groups,
+	items
+}: CommandMenuProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [animateIn, setAnimateIn] = useState(false);
@@ -29,18 +33,22 @@ function CommandMenu({ groups }: CommandMenuProps) {
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	// const allItems = useMemo(() => groups.flatMap(group => group.items), [groups]);
+	const normalizedGroups = useMemo(() => {
+		if (groups) return groups;
+		if (items) return [{ id: "default", heading: "", items }];
+		return [];
+	}, [groups, items]);
 
 	const filteredItems = useMemo(() => {
-		if (!searchQuery) return groups;
+		if (!searchQuery) return normalizedGroups;
 
-		return groups.map(group => ({
+		return normalizedGroups.map(group => ({
 			...group,
 			items: group.items.filter(item =>
 				item.title.toLowerCase().includes(searchQuery.toLowerCase())
 			)
 		})).filter(group => group.items.length > 0);
-	}, [searchQuery, groups]);
+	}, [searchQuery, normalizedGroups]);
 
 	const flatFilteredItems = useMemo(() => filteredItems.flatMap(group => group.items), [filteredItems]);
 
@@ -144,7 +152,7 @@ function CommandMenu({ groups }: CommandMenuProps) {
 							<ul>
 								{filteredItems.map(group => (
 									<li key={group.id}>
-										<p className="text-sm text-gray-500 px-2 pb-2 pt-4">{group.heading}</p>
+										{group.heading && <p className="text-sm text-gray-500 px-2 pb-2 pt-4">{group.heading}</p>}
 										<ul>
 											{group.items.map(item => {
 												itemIndex++;
