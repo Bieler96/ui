@@ -153,7 +153,7 @@ function CommandMenu({
 							<ul>
 								{filteredItems.map(group => (
 									<li key={group.id}>
-										{group.heading && <p className="text-sm text-gray-500 px-2 pb-2 pt-4">{group.heading}</p>}
+										{group.heading && <p className="text-sm text-on-surface/75 px-2 pb-2 pt-4">{group.heading}</p>}
 										<ul>
 											{group.items.map(item => {
 												itemIndex++;
@@ -177,7 +177,7 @@ function CommandMenu({
 								))}
 							</ul>
 						) : (
-							<p className="text-center text-sm text-gray-500 py-4">No results found.</p>
+							<p className="text-center text-sm text-on-surface/75 py-4">No results found.</p>
 						)}
 					</div>
 				</div>
