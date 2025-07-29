@@ -16,7 +16,10 @@
 		"preview": "vite preview",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"update-package": "npm run build && npm publish"
+		"update-package": "npm run build && npm publish",
+		"patch": "npm version patch && npm run update-package",
+		"minor": "npm version minor && npm run update-package",
+		"major": "npm version major && npm run update-package"
 	},
 	"dependencies": {
 		"@floating-ui/react": "^0.27.14",
