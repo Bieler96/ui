@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import Input from "../input/Input";
@@ -10,11 +10,17 @@ export interface CommandMenuItemType {
 	onSelect: () => void;
 }
 
-export interface CommandMenuProps {
+export interface CommandMenuGroupType {
+	id: string;
+	heading: string;
 	items: CommandMenuItemType[];
 }
 
-export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
+export interface CommandMenuProps {
+	groups: CommandMenuGroupType[];
+}
+
+export const CommandMenu: React.FC<CommandMenuProps> = ({ groups }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [animateIn, setAnimateIn] = useState(false);
@@ -23,9 +29,20 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	const filteredItems = items.filter(item =>
-		item.title.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const allItems = useMemo(() => groups.flatMap(group => group.items), [groups]);
+
+	const filteredItems = useMemo(() => {
+		if (!searchQuery) return groups;
+
+		return groups.map(group => ({
+			...group,
+			items: group.items.filter(item =>
+				item.title.toLowerCase().includes(searchQuery.toLowerCase())
+			)
+		})).filter(group => group.items.length > 0);
+	}, [searchQuery, groups]);
+
+	const flatFilteredItems = useMemo(() => filteredItems.flatMap(group => group.items), [filteredItems]);
 
 	const handleClose = () => {
 		setAnimateIn(false);
@@ -50,25 +67,24 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 				if (e.key === "Escape") handleClose();
 				else if (e.key === "ArrowDown") {
 					e.preventDefault();
-					setActiveIndex((prev) => (prev + 1) % filteredItems.length);
+					setActiveIndex((prev) => (prev + 1) % flatFilteredItems.length);
 				} else if (e.key === "ArrowUp") {
 					e.preventDefault();
-					setActiveIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+					setActiveIndex((prev) => (prev - 1 + flatFilteredItems.length) % flatFilteredItems.length);
 				} else if (e.key === "Enter") {
 					e.preventDefault();
-					if (listRef.current[activeIndex]) {
-						listRef.current[activeIndex]?.click();
+					const selectedItem = flatFilteredItems[activeIndex];
+					if (selectedItem) {
+						handleSelect(selectedItem);
 					}
 				}
 			}
 		};
 		document.addEventListener("keydown", down);
 		return () => document.removeEventListener("keydown", down);
-	}, [isOpen, activeIndex, filteredItems.length]);
+	}, [isOpen, activeIndex, flatFilteredItems]);
 
-	useEffect(() => {
-		if (isOpen) setIsMounted(true);
-	}, [isOpen]);
+	useEffect(() => { if (isOpen) setIsMounted(true); }, [isOpen]);
 
 	useEffect(() => {
 		if (isMounted) {
@@ -81,9 +97,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 		}
 	}, [isMounted]);
 
-	useEffect(() => {
-		setActiveIndex(0);
-	}, [searchQuery]);
+	useEffect(() => { setActiveIndex(0); }, [searchQuery]);
 
 	useEffect(() => {
 		if (isMounted) document.body.style.overflow = "hidden";
@@ -98,6 +112,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 	}, [isMounted, activeIndex]);
 
 	if (!isMounted) return null;
+
+	let itemIndex = -1;
 
 	return (
 		<>
@@ -123,19 +139,29 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ items }) => {
 							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
 					</div>
-					<div className="p-4 pt-0">
-						{filteredItems.length > 0 ? (
+					<div className="p-4 pt-0 max-h-[400px] overflow-y-auto">
+						{flatFilteredItems.length > 0 ? (
 							<ul>
-								<p className="text-sm text-gray-500 px-2 pb-2">Suggestions</p>
-								{filteredItems.map((item, index) => (
-									<CommandMenuItem
-										key={item.id}
-										ref={(el) => { listRef.current[index] = el; }}
-										isActive={activeIndex === index}
-										onSelect={() => handleSelect(item)}
-									>
-										<p>{item.title}</p>
-									</CommandMenuItem>
+								{filteredItems.map(group => (
+									<li key={group.id}>
+										<p className="text-sm text-gray-500 px-2 pb-2 pt-4">{group.heading}</p>
+										<ul>
+											{group.items.map(item => {
+												itemIndex++;
+												const currentIndex = itemIndex;
+												return (
+													<CommandMenuItem
+														key={item.id}
+														ref={(el) => { listRef.current[currentIndex] = el; }}
+														isActive={activeIndex === currentIndex}
+														onSelect={() => handleSelect(item)}
+													>
+														<p>{item.title}</p>
+													</CommandMenuItem>
+												)
+											})}
+										</ul>
+									</li>
 								))}
 							</ul>
 						) : (
