@@ -38,16 +38,16 @@ const sampleGroups: CommandMenuGroupType[] = [
 		id: "general",
 		heading: "General",
 		items: [
-			{ id: "profile", title: "Profile", onSelect: () => alert("Profile selected") },
-			{ id: "settings", title: "Settings", onSelect: () => alert("Settings selected") },
+			{ id: "profile", title: "Profile", description: "View your profile", onSelect: () => alert("Profile selected") },
+			{ id: "settings", title: "Settings", description: "Manage your settings", onSelect: () => alert("Settings selected") },
 		]
 	},
 	{
 		id: "app",
 		heading: "Application",
 		items: [
-			{ id: "dashboard", title: "Dashboard", onSelect: () => alert("Dashboard selected") },
-			{ id: "logout", title: "Logout", onSelect: () => alert("Logout selected") },
+			{ id: "dashboard", title: "Dashboard", description: "View your dashboard", onSelect: () => alert("Dashboard selected") },
+			{ id: "logout", title: "Logout", description: "Sign out of your account", onSelect: () => alert("Logout selected") },
 		]
 	}
 ];

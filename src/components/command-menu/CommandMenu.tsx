@@ -7,6 +7,7 @@ import { CommandMenuItem } from "./CommandMenuItem";
 export interface CommandMenuItemType {
 	id: string;
 	title: string;
+	description?: string;
 	onSelect: () => void;
 }
 
@@ -164,7 +165,10 @@ function CommandMenu({
 														isActive={activeIndex === currentIndex}
 														onSelect={() => handleSelect(item)}
 													>
-														<p>{item.title}</p>
+														<div className="flex flex-col gap-1">
+															<p>{item.title}</p>
+															{item.description && <p className="text-xs opacity-75">{item.description}</p>}
+														</div>
 													</CommandMenuItem>
 												)
 											})}
