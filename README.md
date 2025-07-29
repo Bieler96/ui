@@ -1,69 +1,61 @@
-# React + TypeScript + Vite
+# Your UI Library
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains a collection of reusable UI components and hooks built with React and Tailwind CSS. It's designed to provide a consistent and accessible set of building blocks for your web applications.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To use these components in your project, install the package via npm:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install dabi-ui
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Once installed, you can import and use any component or hook:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```typescript
+import { Button } from "dabi-ui";
+import { useToast } from "dabi-ui";
+
+function MyComponent() {
+  const { toast } = useToast();
+
+  return (
+    <Button onClick={() => toast("Hello from Toast!")}>Click Me</Button>
+  );
+}
 ```
+
+## Components & Hooks
+
+Here's an overview of the available components and hooks:
+
+### Components
+
+- `Alert`
+- `Button`
+- `ButtonGroup`
+- `Card`
+- `Checkbox`
+- `Chip`
+- `CommandMenu`
+- `CommandMenuItem`
+- `Confirm`
+- `CopyButton`
+- `DataTable`
+- `Dialog`
+- `Drawer`
+- `Input`
+- `Item`
+- `Popover`
+- `Separator`
+- `Skeleton`
+- `Toaster`
+- `Tooltip`
+
+### Hooks
+
+- `useAlert`
+- `useConfirm`
+- `useToast`
