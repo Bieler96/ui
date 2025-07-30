@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Info } from "lucide-react";
-import Popover from "../components/popover/Popover";
+import { Popover } from "../components/popover/Popover";
 
 const meta: Meta<typeof Popover> = {
   title: "Components/Popover",

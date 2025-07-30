@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Dialog from "../components/dialog/Dialog";
+import { Dialog } from "../components/dialog/Dialog";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof Dialog> = {

@@ -1,16 +1,17 @@
 import clsx from "clsx";
+import React from "react";
 
 export type ButtonVariant = "filled" | "outlined" | "tonal" | "ghost";
 
 export type Size = "sm" | "md" | "lg";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: ButtonVariant;
 	size?: Size;
 	children: React.ReactNode;
 }
 
-function Button({
+export function Button({
 	variant = "filled",
 	size = "md",
 	children,
@@ -37,5 +38,3 @@ function Button({
 		</button>
 	);
 }
-
-export default Button;

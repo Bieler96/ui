@@ -1,5 +1,5 @@
 import type { Placement } from "@floating-ui/react";
-import Popover from "../popover/Popover";
+import { Popover } from "../popover/Popover";
 import clsx from "clsx";
 
 export interface TooltipProps {
@@ -9,7 +9,7 @@ export interface TooltipProps {
 	placement?: Placement;
 }
 
-function Tooltip({
+export function Tooltip({
 	children,
 	content,
 	className,
@@ -28,5 +28,3 @@ function Tooltip({
 		/>
 	);
 }
-
-export default Tooltip;

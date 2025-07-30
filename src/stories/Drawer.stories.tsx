@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { CustomDrawer } from '../components/drawer/Drawer';
+import { Drawer } from '../components/drawer/Drawer';
 import React from 'react';
-import Button from '../components/button/Button';
+import { Button } from '../components/button/Button';
 
-const meta: Meta<typeof CustomDrawer> = {
+const meta: Meta<typeof Drawer> = {
 	title: 'Components/Drawer',
-	component: CustomDrawer,
+	component: Drawer,
 	parameters: {
 		layout: 'centered',
 	},
@@ -21,7 +21,7 @@ const meta: Meta<typeof CustomDrawer> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CustomDrawer>;
+type Story = StoryObj<typeof Drawer>;
 
 export const Default: Story = {
 	args: {
@@ -38,9 +38,9 @@ export const Default: Story = {
 	render: (args) => {
 		const [open, setOpen] = React.useState(false);
 		return (
-			<CustomDrawer {...args} open={open} onOpenChange={setOpen}>
+			<Drawer {...args} open={open} onOpenChange={setOpen}>
 				{args.children}
-			</CustomDrawer>
+			</Drawer>
 		);
 	},
 };
@@ -61,9 +61,9 @@ export const Left: Story = {
 	render: (args) => {
 		const [open, setOpen] = React.useState(false);
 		return (
-			<CustomDrawer {...args} open={open} onOpenChange={setOpen}>
+			<Drawer {...args} open={open} onOpenChange={setOpen}>
 				{args.children}
-			</CustomDrawer>
+			</Drawer>
 		);
 	},
 };
@@ -84,9 +84,9 @@ export const Right: Story = {
 	render: (args) => {
 		const [open, setOpen] = React.useState(false);
 		return (
-			<CustomDrawer {...args} open={open} onOpenChange={setOpen}>
+			<Drawer {...args} open={open} onOpenChange={setOpen}>
 				{args.children}
-			</CustomDrawer>
+			</Drawer>
 		);
 	},
 };

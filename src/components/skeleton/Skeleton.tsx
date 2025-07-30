@@ -5,7 +5,7 @@ export interface SkeletonProps {
 	className?: string;
 }
 
-function Skeleton({
+export function Skeleton({
 	delay = 0,
 	className,
 	...props
@@ -20,5 +20,3 @@ function Skeleton({
 		></div>
 	);
 }
-
-export default Skeleton;

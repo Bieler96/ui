@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Chip from '../components/chip/Chip';
+import { Chip } from '../components/chip/Chip';
 import { useState } from 'react';
 import { Camera } from 'lucide-react';
 

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
-import DataTable, { Alignment, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
-import Button from '../components/button/Button';
+import { DataTable, Alignment, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
+import { Button } from '../components/button/Button';
 
 const meta: Meta<typeof DataTable> = {
 	title: 'Components/DataTable',

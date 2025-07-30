@@ -6,7 +6,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	variant?: "default" | "ghost";
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	({ label, className, variant = "default", ...props }, ref) => {
 		const base =
 			"w-full rounded-lg transition duration-150 disabled:opacity-50 disabled:pointer-events-none";
@@ -37,5 +37,3 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		);
 	}
 );
-
-export default Input;

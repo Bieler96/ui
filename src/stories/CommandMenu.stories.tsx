@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import CommandMenu, { type CommandMenuGroupType, type CommandMenuItemType } from "../components/command-menu/CommandMenu";
+import { CommandMenu, type CommandMenuGroupType, type CommandMenuItemType } from "../components/command-menu/CommandMenu";
 
 const meta: Meta<typeof CommandMenu> = {
 	title: "Components/CommandMenu",

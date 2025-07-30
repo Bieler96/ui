@@ -1,7 +1,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useAlert } from '../hooks/useAlert';
-import Button from '../components/button/Button';
+import { Button } from '../components/button/Button';
 
 const meta: Meta<typeof useAlert> = {
     title: 'Hooks/useAlert',

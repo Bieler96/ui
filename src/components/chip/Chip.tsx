@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'clsx';
 import { X } from 'lucide-react';
 
-type ChipProps = {
+export type ChipProps = {
 	variant?: 'assist' | 'filter' | 'input' | 'suggestion';
 	label: string;
 	icon?: React.ReactNode;
@@ -12,7 +12,7 @@ type ChipProps = {
 	selected?: boolean;
 };
 
-const Chip: React.FC<ChipProps> = ({
+export const Chip: React.FC<ChipProps> = ({
 	variant = 'assist',
 	label,
 	icon,
@@ -47,5 +47,3 @@ const Chip: React.FC<ChipProps> = ({
 		</div>
 	);
 };
-
-export default Chip;

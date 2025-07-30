@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-export function useToast() {
+export function useToast(): { toast: typeof toast } {
   return {
     toast,
   };

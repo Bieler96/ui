@@ -1,5 +1,5 @@
 import Dialog from '../dialog/Dialog';
-import Button from '../button/Button';
+import { Button } from '../button/Button';
 
 export interface ConfirmProps {
 	open: boolean;

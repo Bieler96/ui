@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from './hooks/useToast';
 import { useConfirm } from './hooks/useConfirm';
 import DataTable, { Alignment, type ColumnDef } from './components/datatable/DataTable';
-import Button from './components/button/Button';
+import { Button } from './components/button/Button';
 import { Crown, HeartPlus, Mail, Phone, PhoneCall, Trash2, User } from 'lucide-react';
 import Dialog from './components/dialog/Dialog';
 import CopyButton from './components/copy-button/CopyButton';

@@ -1,12 +1,11 @@
-
 import { useState, useCallback, type JSX } from 'react';
 import { Alert, type AlertProps } from '../components/alert/Alert';
 
 type AlertOptions = Omit<AlertProps, 'open' | 'onClose'>;
 
 type UseAlertReturn = {
-  alert: (options: AlertOptions) => Promise<void>;
-  AlertDialog: () => JSX.Element | null;
+	alert: (options: AlertOptions) => Promise<void>;
+	AlertDialog: () => JSX.Element | null;
 };
 
 export const useAlert = (): UseAlertReturn => {

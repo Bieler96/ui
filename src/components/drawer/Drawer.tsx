@@ -1,7 +1,7 @@
-import { Drawer } from "vaul";
+import { Drawer as VaulDrawer } from "vaul";
 import clsx from "clsx";
 
-interface DrawerProps {
+export interface DrawerProps {
 	children: React.ReactNode;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -9,7 +9,7 @@ interface DrawerProps {
 	direction?: "left" | "right" | "bottom";
 }
 
-export function CustomDrawer({
+export function Drawer({
 	children,
 	open,
 	onOpenChange,
@@ -23,15 +23,15 @@ export function CustomDrawer({
 	const sideBg = direction === "right" || direction === "left" ? "bg-surface rounded-lg" : "mb-4";
 
 	return (
-		<Drawer.Root
+		<VaulDrawer.Root
 			open={open}
 			onOpenChange={onOpenChange}
 			direction={direction}
 		>
-			<Drawer.Trigger asChild>{trigger}</Drawer.Trigger>
-			<Drawer.Portal>
-				<Drawer.Overlay className="fixed inset-0 bg-black/40" />
-				<Drawer.Content
+			<VaulDrawer.Trigger asChild>{trigger}</VaulDrawer.Trigger>
+			<VaulDrawer.Portal>
+				<VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
+				<VaulDrawer.Content
 					className={clsx(contentClass, side)}
 					style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
 				>
@@ -42,8 +42,8 @@ export function CustomDrawer({
 					<div className={clsx("p-2 flex-1 overflow-y-auto", sideBg)}>
 						{children}
 					</div>
-				</Drawer.Content>
-			</Drawer.Portal>
-		</Drawer.Root>
+				</VaulDrawer.Content>
+			</VaulDrawer.Portal>
+		</VaulDrawer.Root>
 	);
 }

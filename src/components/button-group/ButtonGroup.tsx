@@ -1,4 +1,3 @@
-
 import React from 'react';
 import clsx from 'clsx';
 
@@ -7,7 +6,7 @@ export interface ButtonGroupProps {
 	className?: string;
 }
 
-function ButtonGroup({
+export function ButtonGroup({
 	children,
 	className
 }: ButtonGroupProps) {
@@ -37,5 +36,3 @@ function ButtonGroup({
 		</div>
 	);
 };
-
-export default ButtonGroup;

@@ -12,7 +12,7 @@ export interface ItemProps {
 	variant?: "first" | "last" | "none" | "rounded";
 }
 
-function Item({
+export function Item({
 	label,
 	description,
 	leadingContent,
@@ -55,5 +55,3 @@ function Item({
 		</div>
 	);
 }
-
-export default Item;

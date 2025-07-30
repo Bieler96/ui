@@ -6,7 +6,7 @@ export interface CopyButtonProps {
 	successulCallback?: () => void;
 }
 
-function CopyButton({ text, successulCallback }: CopyButtonProps) {
+export function CopyButton({ text, successulCallback }: CopyButtonProps) {
 	const [copied, setCopied] = useState(false)
 
 	const handleCopy = async () => {
@@ -33,5 +33,3 @@ function CopyButton({ text, successulCallback }: CopyButtonProps) {
 		</button>
 	)
 }
-
-export default CopyButton;

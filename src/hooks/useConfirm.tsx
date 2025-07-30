@@ -1,12 +1,11 @@
-
 import { useState, useCallback, type JSX } from 'react';
 import { Confirm, type ConfirmProps } from '../components/confirm/Confirm';
 
 type ConfirmOptions = Omit<ConfirmProps, 'open' | 'onClose' | 'onConfirm'>;
 
 type UseConfirmReturn = {
-  confirm: (options: ConfirmOptions) => Promise<boolean>;
-  ConfirmationDialog: () => JSX.Element | null;
+	confirm: (options: ConfirmOptions) => Promise<boolean>;
+	ConfirmationDialog: () => JSX.Element | null;
 };
 
 export const useConfirm = (): UseConfirmReturn => {
@@ -60,4 +59,3 @@ export const useConfirm = (): UseConfirmReturn => {
 
 	return { confirm, ConfirmationDialog };
 };
-

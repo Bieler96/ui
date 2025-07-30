@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useConfirm } from '../hooks/useConfirm';
 import { useToast } from '../hooks/useToast';
 import { Toaster } from '../components/toaster/Toaster';
-import Button from '../components/button/Button';
+import { Button } from '../components/button/Button';
 
 const meta: Meta<typeof useConfirm> = {
   title: 'Hooks/useConfirm',

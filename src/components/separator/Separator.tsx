@@ -1,13 +1,13 @@
 import clsx from "clsx";
 
-type Orientation = "horizontal" | "vertical";
+export type Orientation = "horizontal" | "vertical";
 
 export interface SeparatorProps {
 	orientation?: Orientation;
 	className?: string;
 }
 
-function Separator({
+export function Separator({
 	orientation = "horizontal",
 	className,
 }: SeparatorProps) {
@@ -24,5 +24,3 @@ function Separator({
 		/>
 	);
 }
-
-export default Separator;

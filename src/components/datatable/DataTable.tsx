@@ -24,7 +24,7 @@ export type HeaderGroup = {
 	children: string[];
 };
 
-function getHeaderGroups(data: Array<Record<string, any>>): HeaderGroup[] {
+export function getHeaderGroups(data: Array<Record<string, any>>): HeaderGroup[] {
 	const allKeys = new Set<string>();
 	data.forEach((row) => {
 		Object.keys(row).forEach((key) => {
@@ -79,7 +79,7 @@ function getValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
 }
 
-function DataTable<TData extends Record<string, any>>({
+export function DataTable<TData extends Record<string, any>>({
 	data,
 	columns,
 	headerAlignment = Alignment.CENTER,
@@ -335,5 +335,3 @@ function DataTable<TData extends Record<string, any>>({
 		</div>
 	);
 }
-
-export default DataTable;

@@ -8,7 +8,7 @@ export interface CheckboxProps {
 	className?: string;
 }
 
-function Checkbox({
+export function Checkbox({
 	checked,
 	onChange,
 	label,
@@ -58,5 +58,3 @@ function Checkbox({
 		</label>
 	);
 }
-
-export default Checkbox;

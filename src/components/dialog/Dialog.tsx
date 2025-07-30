@@ -8,7 +8,7 @@ export interface DialogProps {
 	classNameOverlay?: string | undefined
 }
 
-function Dialog({
+export function Dialog({
 	open,
 	onClose,
 	children,
@@ -98,5 +98,3 @@ function Dialog({
 		</>
 	);
 }
-
-export default Dialog;

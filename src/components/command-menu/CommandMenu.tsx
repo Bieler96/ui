@@ -22,7 +22,7 @@ export interface CommandMenuProps {
 	items?: CommandMenuItemType[];
 }
 
-function CommandMenu({
+export function CommandMenu({
 	groups,
 	items
 }: CommandMenuProps) {
@@ -185,5 +185,3 @@ function CommandMenu({
 		</>
 	);
 };
-
-export default CommandMenu;

@@ -17,7 +17,7 @@ export interface PopoverProps {
 	placement?: Placement;
 }
 
-function Popover({
+export function Popover({
 	trigger,
 	content,
 	onHover = false,
@@ -99,5 +99,3 @@ function Popover({
 		</div>
 	);
 }
-
-export default Popover;

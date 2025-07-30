@@ -1,15 +1,17 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
-import { resolve } from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import dts from 'vite-plugin-dts'
+import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()],
+	plugins: [react(), tailwindcss(), dts({ insertTypesEntry: true })],
 	build: {
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
-			name: 'ui',
-			fileName: (format) => `ui.${format}.js`,
+			entry: path.resolve(__dirname, 'src/index.ts'),
+			name: 'DabiUI',
+			formats: ['es', 'cjs'],
+			fileName: (format) => `dabi-ui.${format}.js`,
 		},
 		rollupOptions: {
 			external: ['react', 'react-dom'],
@@ -21,4 +23,4 @@ export default defineConfig({
 			},
 		},
 	},
-});
+})

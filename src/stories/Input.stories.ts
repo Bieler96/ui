@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "../components/input/Input";
+import { Input } from "../components/input/Input";
 
 const meta: Meta<typeof Input> = {
-	title: "Components/Input",
-	component: Input,
-	parameters: {
-		layout: "centered",
-	},
-	tags: ["autodocs"],
+  title: "Components/Input",
+  component: Input,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -15,9 +15,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-	args: {
-		placeholder: "Enter text...",
-	},
+  args: {
+    placeholder: "Enter text...",
+  },
 };
 
 export const WithLabel: Story = {

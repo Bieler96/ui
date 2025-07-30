@@ -7,7 +7,7 @@ export type CardProps = {
 	className?: string;
 };
 
-const Card: React.FC<CardProps> = ({
+export const Card: React.FC<CardProps> = ({
 	variant = 'filled',
 	children,
 	className,
@@ -24,5 +24,3 @@ const Card: React.FC<CardProps> = ({
 
 	return <div className={cardClasses}>{children}</div>;
 };
-
-export default Card;
