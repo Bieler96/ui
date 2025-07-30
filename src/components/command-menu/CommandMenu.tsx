@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
-import Input from "../input/Input";
+import { Input } from "../input/Input";
 import { CommandMenuItem } from "./CommandMenuItem";
 
 export interface CommandMenuItemType {
