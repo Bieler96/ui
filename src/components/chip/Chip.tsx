@@ -11,14 +11,14 @@ export type ChipProps = {
 	onClick?: () => void;
 	selected?: boolean;
 	colors?: {
-		backgroundColor?: string;
-		textColor?: string;
-		borderColor?: string;
-		hoverBackgroundColor?: string;
-		selectedBackgroundColor?: string;
-		selectedTextColor?: string;
-		selectedBorderColor?: string;
-		selectedHoverBackgroundColor?: string;
+		backgroundColorClass?: string;
+		textColorClass?: string;
+		borderColorClass?: string;
+		hoverBackgroundColorClass?: string;
+		selectedBackgroundColorClass?: string;
+		selectedTextColorClass?: string;
+		selectedBorderColorClass?: string;
+		selectedHoverBackgroundColorClass?: string;
 	};
 };
 
@@ -48,37 +48,22 @@ export const Chip: React.FC<ChipProps> = ({
 
 	const chipClasses = cx(baseClasses, variantClasses[variant]);
 
-	const style: React.CSSProperties = {};
+	const dynamicClasses = cx({
+		[colors?.backgroundColorClass ?? '']: !selected && !isHovered,
+		[colors?.textColorClass ?? '']: !selected,
+		[colors?.borderColorClass ?? '']: !selected,
+		[colors?.hoverBackgroundColorClass ?? '']: !selected && isHovered,
 
-	if (selected) {
-		if (colors?.selectedBackgroundColor)
-			style.backgroundColor = colors.selectedBackgroundColor + ' !important';
-		if (colors?.selectedTextColor)
-			style.color = colors.selectedTextColor + ' !important';
-		if (colors?.selectedBorderColor)
-			style.borderColor = colors.selectedBorderColor + ' !important';
-	} else {
-		if (colors?.backgroundColor)
-			style.backgroundColor = colors.backgroundColor + ' !important';
-		if (colors?.textColor)
-			style.color = colors.textColor + ' !important';
-		if (colors?.borderColor)
-			style.borderColor = colors.borderColor + ' !important';
-	}
-
-	if (isHovered) {
-		if (selected && colors?.selectedHoverBackgroundColor) {
-			style.backgroundColor = colors.selectedHoverBackgroundColor + ' !important';
-		} else if (!selected && colors?.hoverBackgroundColor) {
-			style.backgroundColor = colors.hoverBackgroundColor + ' !important';
-		}
-	}
+		[colors?.selectedBackgroundColorClass ?? '']: selected && !isHovered,
+		[colors?.selectedTextColorClass ?? '']: selected,
+		[colors?.selectedBorderColorClass ?? '']: selected,
+		[colors?.selectedHoverBackgroundColorClass ?? '']: selected && isHovered,
+	});
 
 	return (
 		<div
-			className={chipClasses}
+			className={cx(chipClasses, dynamicClasses)}
 			onClick={onClick}
-			style={style}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 		>
