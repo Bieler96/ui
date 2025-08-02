@@ -57,3 +57,25 @@ export const Suggestion: Story = {
 		label: 'Suggestion Chip',
 	},
 };
+
+export const CustomColors: Story = {
+	args: {
+		variant: 'filter',
+		label: 'Custom Colors',
+		colors: {
+			backgroundColor: '#ffffff',
+			textColor: '#000000',
+			borderColor: '#000000',
+			hoverBackgroundColor: '#eeeeee',
+			selectedBackgroundColor: '#0000ff',
+			selectedTextColor: '#ffffff',
+			selectedBorderColor: '#ff0000',
+			selectedHoverBackgroundColor: '#0000cc',
+		},
+	},
+	render: function Render(args) {
+		const [selected, setSelected] = useState(args.selected);
+
+		return <Chip {...args} selected={selected} onClick={() => setSelected(!selected)} />;
+	},
+};
