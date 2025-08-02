@@ -51,20 +51,26 @@ export const Chip: React.FC<ChipProps> = ({
 	const style: React.CSSProperties = {};
 
 	if (selected) {
-		style.backgroundColor = colors?.selectedBackgroundColor + "!important";
-		style.color = colors?.selectedTextColor + "!important";
-		style.borderColor = colors?.selectedBorderColor + "!important";
+		if (colors?.selectedBackgroundColor)
+			style.backgroundColor = colors.selectedBackgroundColor + ' !important';
+		if (colors?.selectedTextColor)
+			style.color = colors.selectedTextColor + ' !important';
+		if (colors?.selectedBorderColor)
+			style.borderColor = colors.selectedBorderColor + ' !important';
 	} else {
-		style.backgroundColor = colors?.backgroundColor + "!important";
-		style.color = colors?.textColor + "!important";
-		style.borderColor = colors?.borderColor + "!important";
+		if (colors?.backgroundColor)
+			style.backgroundColor = colors.backgroundColor + ' !important';
+		if (colors?.textColor)
+			style.color = colors.textColor + ' !important';
+		if (colors?.borderColor)
+			style.borderColor = colors.borderColor + ' !important';
 	}
 
 	if (isHovered) {
 		if (selected && colors?.selectedHoverBackgroundColor) {
-			style.backgroundColor = colors.selectedHoverBackgroundColor + "!important";
+			style.backgroundColor = colors.selectedHoverBackgroundColor + ' !important';
 		} else if (!selected && colors?.hoverBackgroundColor) {
-			style.backgroundColor = colors.hoverBackgroundColor + "!important";
+			style.backgroundColor = colors.hoverBackgroundColor + ' !important';
 		}
 	}
 
