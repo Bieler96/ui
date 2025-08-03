@@ -18,6 +18,7 @@ export * from './components/separator/Separator';
 export * from './components/skeleton/Skeleton';
 export * from './components/toaster/Toaster';
 export * from './components/tooltip/Tooltip';
+export * from './components/textarea/Textarea';
 
 export * from './hooks/useAlert';
 export * from './hooks/useConfirm';
