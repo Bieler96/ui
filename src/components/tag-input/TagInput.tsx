@@ -95,7 +95,11 @@ export const TagInput: React.FC<TagInputProps> = ({ tags, setTags, placeholder, 
 				>
 					<div className="h-fit flex flex-wrap gap-1">
 						{tags.map(tag => (
-							<Chip key={tag} variant="input" onDelete={() => removeTag(tag)} label={tag} />
+							<Chip key={tag} variant="input" onDelete={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								removeTag(tag)
+							}} label={tag} />
 						))}
 					</div>
 					<Input
