@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Confirm } from '../components/confirm/Confirm';
 import { Button } from '../components/button/Button';

@@ -1,5 +1,5 @@
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useAlert } from '../hooks/useAlert';
 import { Button } from '../components/button/Button';
 

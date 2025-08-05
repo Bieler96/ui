@@ -15,7 +15,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const variants = {
 			default:
 				"border border-outline-variant outline-none focus-visible:ring-primary/50 focus-visible:ring-[3px]",
-			ghost: "border-none outline-none focus-visible:ring-0",
+			ghost: "border-none outline-none focus-visible:ring-none",
 		};
 
 		return (
