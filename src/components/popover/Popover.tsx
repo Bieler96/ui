@@ -1,3 +1,4 @@
+
 import {
 	useFloating,
 	offset,
@@ -15,6 +16,8 @@ export interface PopoverProps {
 	onHover?: boolean;
 	className?: string;
 	placement?: Placement;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 }
 
 export function Popover({
@@ -23,14 +26,21 @@ export function Popover({
 	onHover = false,
 	className,
 	placement = "bottom",
+	open: controlledOpen,
+	onOpenChange,
 }: PopoverProps) {
-	const [open, setOpen] = useState(false);
+	const [internalOpen, setInternalOpen] = useState(false);
+	const open = controlledOpen ?? internalOpen;
+	const setOpen = onOpenChange ?? setInternalOpen;
+
 	const timeoutRef = useRef<number | null>(null);
 
 	const { refs, floatingStyles, update } = useFloating({
 		placement,
 		middleware: [offset(8), flip(), shift()],
 		whileElementsMounted: autoUpdate,
+		open,
+		onOpenChange: setOpen,
 	});
 
 	const handleMouseEnter = () => {
@@ -57,7 +67,7 @@ export function Popover({
 			document.addEventListener("mousedown", handleClickOutside);
 			return () => document.removeEventListener("mousedown", handleClickOutside);
 		}
-	}, [open, onHover, refs]);
+	}, [open, onHover, refs, setOpen]);
 
 	const triggerProps = onHover
 		? {
@@ -66,7 +76,7 @@ export function Popover({
 		}
 		: {
 			onClick: () => {
-				setOpen((prev) => !prev);
+				setOpen(!open);
 				update();
 			},
 		};
