@@ -1,10 +1,10 @@
-import { createContext, forwardRef, HTMLAttributes, useContext } from 'react'
+import { createContext, forwardRef, HTMLAttributes, useCallback, useContext, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { clsx } from 'clsx'
 
 type AccordionContextProps = {
 	value: string[]
-	onValueChange: (value: string) => void
+	onItemClick: (value: string) => void
 }
 
 const AccordionContext = createContext<AccordionContextProps | null>(null)
@@ -19,19 +19,82 @@ const useAccordion = () => {
 	return context
 }
 
-type AccordionProps = {
-	value: string[]
-	onValueChange: (value: string) => void
-} & HTMLAttributes<HTMLDivElement>
+type AccordionBaseProps = Omit<HTMLAttributes<HTMLDivElement>, 'onSelect'>
+
+type AccordionSingleProps = {
+	type: 'single'
+	value?: string
+	defaultValue?: string
+	collapsible?: boolean
+	onValueChange?: (value: string | undefined) => void
+}
+
+type AccordionMultipleProps = {
+	type?: 'multiple'
+	value?: string[]
+	defaultValue?: string[]
+	onValueChange?: (value: string[]) => void
+}
+
+type AccordionProps = AccordionBaseProps & (AccordionSingleProps | AccordionMultipleProps)
 
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
-	({ children, className, value, onValueChange, ...props }, ref) => {
+	(props, ref) => {
+		const {
+			type = 'multiple',
+			collapsible: _collapsible,
+			value: valueProp,
+			defaultValue,
+			onValueChange,
+			children,
+			className,
+			...rest
+		} = props as AccordionProps & { collapsible?: boolean }
+
+		const collapsible = props.type === 'single' && props.collapsible
+
+		const [internalValue, setInternalValue] = useState(defaultValue)
+		const isControlled = valueProp !== undefined
+		const value = isControlled ? valueProp : internalValue
+
+		const onItemClick = useCallback(
+			(itemValue: string) => {
+				let newValue: string | string[] | undefined
+
+				if (type === 'single') {
+					const currentSingleValue = value as string | undefined
+					newValue = currentSingleValue === itemValue && collapsible ? undefined : itemValue
+					if (onValueChange) {
+						(onValueChange as (v: string | undefined) => void)(newValue)
+					}
+				} else {
+					const currentValues = (value as string[]) || []
+					newValue = currentValues.includes(itemValue)
+						? currentValues.filter((v) => v !== itemValue)
+						: [...currentValues, itemValue]
+					if (onValueChange) {
+						(onValueChange as (v: string[]) => void)(newValue)
+					}
+				}
+
+				if (!isControlled) {
+					setInternalValue(newValue)
+				}
+			},
+			[type, value, collapsible, isControlled, onValueChange]
+		)
+
+		const contextValue = {
+			value: Array.isArray(value) ? value : (value ? [value] : []),
+			onItemClick
+		}
+
 		return (
-			<AccordionContext.Provider value={{ value, onValueChange }}>
+			<AccordionContext.Provider value={contextValue}>
 				<div
 					ref={ref}
 					className={clsx('overflow-hidden rounded-lg border border-outline', className)}
-					{...props}
+					{...rest}
 				>
 					{children}
 				</div>
@@ -80,7 +143,7 @@ export const AccordionTrigger = forwardRef<
 	HTMLButtonElement,
 	HTMLAttributes<HTMLButtonElement>
 >(({ children, className, ...props }, ref) => {
-	const { onValueChange, value: accordionValue } = useAccordion()
+	const { onItemClick, value: accordionValue } = useAccordion()
 	const { value } = useAccordionItem()
 
 	const isOpen = accordionValue.includes(value)
@@ -92,7 +155,7 @@ export const AccordionTrigger = forwardRef<
 				'flex w-full items-center justify-between p-4 font-medium transition-all hover:bg-surface-variant [&[data-state=open]>svg]:rotate-180',
 				className
 			)}
-			onClick={() => onValueChange(value)}
+			onClick={() => onItemClick(value)}
 			{...props}
 		>
 			{children}
@@ -132,3 +195,4 @@ export const AccordionContent = forwardRef<
 		</div>
 	)
 })
+
