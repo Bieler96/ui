@@ -122,14 +122,14 @@ export const WithGeraeteinfo: Story = {
 					"datType",
 					"inputChannels",
 					"outputChannels",
-					"isRuthmann",
-					"isJlg",
-					"isPalfinger",
-					"hasNoDiag",
-					"hasKeyFunction",
-					"hasEqtraceFinder",
-					"hasEqtraceGate",
-					"hasSeparateGps",
+					{ key: "isRuthmann", cell: (value) => value ? "Yes" : "No" },
+					{ key: "isJlg", cell: (value) => value ? "Yes" : "No" },
+					{ key: "isPalfinger", cell: (value) => value ? "Yes" : "No" },
+					{ key: "hasNoDiag", cell: (value) => value ? "Yes" : "No" },
+					{ key: "hasKeyFunction", cell: (value) => value ? "Yes" : "No" },
+					{ key: "hasEqtraceFinder", cell: (value) => value ? "Yes" : "No" },
+					{ key: "hasEqtraceGate", cell: (value) => value ? "Yes" : "No" },
+					{ key: "hasSeparateGps", cell: (value) => value ? "Yes" : "No" },
 					"modulRevision",
 					"imsi",
 					"wlanModulRevision",
@@ -142,9 +142,8 @@ export const WithGeraeteinfo: Story = {
 				<DataCardTitle>Geraeteinfo</DataCardTitle>
 			</DataCardHeader>
 			<DataCardContent>
-				{/* imsi */}
-				<DataCardValue>{(data) => data.imsi}</DataCardValue>
-				<DataCardDescription>IMSI</DataCardDescription>
+				<DataCardValue>{(data) => `Modultyp: ${data.modulTyp}`}</DataCardValue>
+				<DataCardDescription>{(data) => `Firmwareversion: ${data.firmwareVersion}`}</DataCardDescription>
 			</DataCardContent>
 		</DataCard>
 	),

@@ -4,62 +4,68 @@ import clsx from "clsx";
 
 const DataCardContext = React.createContext<any>(null);
 
-export type DataCardConfig = {
-	visibleFields: string[];
-	hiddenFields: string[];
+export type DataCardFieldConfig<TData> = {
+	key: keyof TData & string;
+	cell?: (value: any, row: TData) => React.ReactNode;
 };
 
-type DataCardProps = {
-	data?: any;
-	config?: DataCardConfig;
-	variant: 'elevated' | 'filled' | 'outlined';
+export type DataCardConfig<TData> = {
+	visibleFields: (keyof TData & string | DataCardFieldConfig<TData>)[];
+	hiddenFields: (keyof TData & string | DataCardFieldConfig<TData>)[];
+};
+
+type DataCardProps<TData> = {
+	data?: TData;
+	config?: DataCardConfig<TData>;
+	variant?: 'elevated' | 'filled' | 'outlined';
 } & React.ComponentProps<typeof Card>;
 
-const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
-	({ data, config, variant, children, className, ...props }, ref) => {
-		return (
-			<DataCardContext.Provider value={data}>
-				<Card
-					ref={ref}
-					className={clsx(className)}
-					variant={variant}
-					{...props}
-				>
-					{children}
-					{config && data && (
-						<DataCardBody config={config} data={data} />
-					)}
-				</Card>
-			</DataCardContext.Provider>
-		);
-	}
-);
-DataCard.displayName = "DataCard";
+const DataCard = <TData,>({ data, config, variant, children, className, ...props }: DataCardProps<TData>) => {
+	return (
+		<DataCardContext.Provider value={data}>
+			<Card
+				className={clsx("p-4", className)}
+				variant={variant}
+				{...props}
+			>
+				{children}
+				{config && data && (
+					<DataCardBody config={config} data={data} />
+				)}
+			</Card>
+		</DataCardContext.Provider>
+	);
+};
 
-const DataCardBody = ({ config, data }: { config: DataCardConfig, data: any }) => {
+const DataCardBody = <TData,>({ config, data }: { config: DataCardConfig<TData>, data: TData }) => {
 	const [isExpanded, setIsExpanded] = React.useState(false);
 	const contentRef = React.useRef<HTMLDivElement>(null);
 
+	const renderField = (field: keyof TData & string | DataCardFieldConfig<TData>) => {
+		const key = typeof field === 'string' ? field : field.key;
+		const value = data[key];
+		const cellRenderer = typeof field === 'object' ? field.cell : null;
+
+		const displayValue = cellRenderer ? cellRenderer(value, data) : String(value);
+
+		return (
+			<div key={key} className="flex justify-between text-sm">
+				<span className="text-muted-foreground capitalize">{key}</span>
+				<span>{displayValue}</span>
+			</div>
+		);
+	};
+
 	return (
 		<div className="space-y-2 pt-4">
-			{config.visibleFields.map((field) => (
-				<div key={field} className="flex justify-between text-sm">
-					<span className="text-muted-foreground">{field}</span>
-					<span>{String(data[field])}</span>
-				</div>
-			))}
+			{config.visibleFields.map(renderField)}
 			<div
 				ref={contentRef}
-				className="overflow-hidden transition-all duration-150 ease-in-out"
+				className="overflow-hidden transition-all duration-300 ease-in-out"
 				style={{ maxHeight: isExpanded ? contentRef.current?.scrollHeight : 0 }}
 			>
 				<div className="space-y-2 pt-2">
-					{config.hiddenFields.map((field) => (
-						<div key={field} className="flex justify-between text-sm">
-							<span className="text-muted-foreground">{field}</span>
-							<span>{String(data[field])}</span>
-						</div>
-					))}
+					{config.hiddenFields.map(renderField)}
 				</div>
 			</div>
 			{config.hiddenFields.length > 0 && (
