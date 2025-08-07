@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Chip } from "../chip/Chip";
 import { CommandMenuItem } from "../command-menu/CommandMenuItem";
+import { Input } from "../input/Input";
 import { Popover } from "../popover/Popover";
 
 export interface SelectOption<T> {
@@ -19,6 +20,7 @@ export interface SelectProps<T> {
 	placeholder?: string;
 	className?: string;
 	disabled?: boolean;
+	withSearch?: boolean;
 }
 
 export function Select<T>({
@@ -29,24 +31,30 @@ export function Select<T>({
 	placeholder = "Select...",
 	className,
 	disabled = false,
+	withSearch = false,
 }: SelectProps<T>) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(0);
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
+	const [searchTerm, setSearchTerm] = useState("");
+
+	const filteredOptions = options.filter((option) =>
+		option.label.toLowerCase().includes(searchTerm.toLowerCase())
+	);
 
 	useEffect(() => {
 		if (isOpen) {
 			const handleKeyDown = (e: KeyboardEvent) => {
 				if (e.key === "ArrowDown") {
 					e.preventDefault();
-					setActiveIndex((prev) => (prev + 1) % options.length);
+					setActiveIndex((prev) => (prev + 1) % filteredOptions.length);
 				} else if (e.key === "ArrowUp") {
 					e.preventDefault();
-					setActiveIndex((prev) => (prev - 1 + options.length) % options.length);
+					setActiveIndex((prev) => (prev - 1 + filteredOptions.length) % filteredOptions.length);
 				} else if (e.key === "Enter") {
 					e.preventDefault();
-					if (options[activeIndex]) {
-						handleSelect(options[activeIndex].value);
+					if (filteredOptions[activeIndex]) {
+						handleSelect(filteredOptions[activeIndex].value);
 					}
 				} else if (e.key === "Escape") {
 					setIsOpen(false);
@@ -58,7 +66,7 @@ export function Select<T>({
 				document.removeEventListener("keydown", handleKeyDown);
 			};
 		}
-	}, [isOpen, options, activeIndex]);
+	}, [isOpen, filteredOptions, activeIndex]);
 
 	useEffect(() => {
 		if (isOpen && listRef.current[activeIndex]) {
@@ -69,6 +77,7 @@ export function Select<T>({
 	useEffect(() => {
 		if (isOpen) {
 			setActiveIndex(0);
+			setSearchTerm("");
 		}
 	}, [isOpen]);
 
@@ -107,26 +116,35 @@ export function Select<T>({
 	};
 
 	const popoverContent = (
-		<ul className="py-1 max-h-60 overflow-auto">
-			{options.map((option, index) => (
-				<CommandMenuItem
-					key={String(option.value)}
-					ref={(el) => { listRef.current[index] = el; }}
-					isActive={activeIndex === index}
-					onSelect={() => handleSelect(option.value)}
-				>
-					{multiple && Array.isArray(value) ? (
-						<Checkbox
-							checked={value.includes(option.value)}
-							onChange={() => handleSelect(option.value)}
-							label={option.label}
-						/>
-					) : (
-						<span>{option.label}</span>
-					)}
-				</CommandMenuItem>
-			))}
-		</ul>
+		<div className="flex flex-col">
+			{withSearch && (
+				<Input
+					placeholder="Search..."
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+				/>
+			)}
+			<ul className="py-1 max-h-60 overflow-auto">
+				{filteredOptions.map((option, index) => (
+					<CommandMenuItem
+						key={String(option.value)}
+						ref={(el) => { listRef.current[index] = el; }}
+						isActive={activeIndex === index}
+						onSelect={() => handleSelect(option.value)}
+					>
+						{multiple && Array.isArray(value) ? (
+							<Checkbox
+								checked={value.includes(option.value)}
+								onChange={() => handleSelect(option.value)}
+								label={option.label}
+							/>
+						) : (
+							<span>{option.label}</span>
+						)}
+					</CommandMenuItem>
+				))}
+			</ul>
+		</div>
 	);
 
 	return (

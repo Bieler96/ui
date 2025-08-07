@@ -51,3 +51,15 @@ export const Disabled: Story = {
 		placeholder: "Select an option",
 	},
 };
+
+export const WithSearch: Story = {
+	render: (args) => {
+		const [value, setValue] = useState<string | string[] | undefined>("1");
+		return <Select {...args} value={value} onChange={setValue} />;
+	},
+	args: {
+		options: options,
+		withSearch: true,
+		placeholder: "Search options",
+	},
+};
