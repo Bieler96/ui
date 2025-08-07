@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Chip } from "../chip/Chip";
+import { CommandMenuItem } from "../command-menu/CommandMenuItem";
 import { Popover } from "../popover/Popover";
 
 export interface SelectOption<T> {
@@ -68,9 +69,9 @@ export function Select<T>({
 	const popoverContent = (
 		<ul className="py-1 max-h-60 overflow-auto">
 			{options.map((option) => (
-				<li
+				<CommandMenuItem
 					key={String(option.value)}
-					className="px-3 py-2 cursor-pointer hover:bg-primary/10"
+					onSelect={() => handleSelect(option.value)}
 				>
 					{multiple && Array.isArray(value) ? (
 						<Checkbox
@@ -79,9 +80,9 @@ export function Select<T>({
 							label={option.label}
 						/>
 					) : (
-						<span onClick={() => handleSelect(option.value)}>{option.label}</span>
+						<span>{option.label}</span>
 					)}
-				</li>
+				</CommandMenuItem>
 			))}
 		</ul>
 	);
@@ -96,7 +97,7 @@ export function Select<T>({
 			trigger={
 				<div
 					className={clsx(
-						"flex items-center justify-between w-full rounded-lg transition duration-150 border border-outline-variant outline-none focus-visible:ring-primary/50 focus-visible:ring-[3px] px-3 py-1 min-h-[2.5rem]",
+						"flex items-center justify-between w-full rounded-lg transition duration-150 border border-outline-variant outline-none focus-visible:ring-primary/50 focus-visible:ring-[3px] px-1 py-1 min-h-[2.5rem]",
 						disabled ? "opacity-50 pointer-events-none" : "cursor-pointer",
 					)}
 				>
