@@ -10,279 +10,174 @@ import { CopyButton } from './components/copy-button/CopyButton';
 import { Popover } from './components/popover/Popover';
 import { Separator } from './components/separator/Separator';
 import { Toaster } from './components/toaster/Toaster';
+import {
+	DataCard,
+	DataCardHeader,
+	DataCardTitle,
+	DataCardContent,
+	DataCardValue,
+	DataCardDescription,
+} from "./components/data-card";
 
-interface User {
+interface GeraeteinfoInterface {
 	id: number;
-	role: string;
-	firstName: string;
-	lastName: string;
-	maidenName: string;
-	age: number;
-	gender: string;
-	email: string;
-	phone: string;
-	username: string;
-	password: string;
-	birthDate: string;
-	image: string;
-	bloodGroup: string;
-	height: number;
-	weight: number;
-	eyeColor: string;
-	hair: {
-		color: string;
-		type: string;
-	};
+	datType: number;
+	protocolVersion: number;
+	firmwareVersion: string;
+	inputChannels: number;
+	outputChannels: number;
+	isRuthmann: boolean;
+	isJlg: boolean;
+	isPalfinger: boolean;
+	hasNoDiag: boolean;
+	hasKeyFunction: boolean;
+	hasEqtraceFinder: boolean;
+	hasEqtraceGate: boolean;
+	hasSeparateGps: boolean;
+	modulRevision: number;
+	modulTyp: string;
+	imsi: number;
+	wlanModulRevision: number;
+	wlanModulTyp: string;
 }
 
+const geraeteinfos: GeraeteinfoInterface[] = [
+	{
+		id: 1,
+		datType: 1,
+		protocolVersion: 2,
+		firmwareVersion: "1.2.3",
+		inputChannels: 4,
+		outputChannels: 2,
+		isRuthmann: true,
+		isJlg: false,
+		isPalfinger: false,
+		hasNoDiag: false,
+		hasKeyFunction: true,
+		hasEqtraceFinder: true,
+		hasEqtraceGate: false,
+		hasSeparateGps: true,
+		modulRevision: 3,
+		modulTyp: "CAN-Modul",
+		imsi: 1234567890,
+		wlanModulRevision: 1,
+		wlanModulTyp: "WLAN-Modul",
+	},
+	{
+		id: 2,
+		datType: 2,
+		protocolVersion: 3,
+		firmwareVersion: "2.0.1",
+		inputChannels: 8,
+		outputChannels: 4,
+		isRuthmann: false,
+		isJlg: true,
+		isPalfinger: false,
+		hasNoDiag: true,
+		hasKeyFunction: false,
+		hasEqtraceFinder: true,
+		hasEqtraceGate: true,
+		hasSeparateGps: false,
+		modulRevision: 4,
+		modulTyp: "IO-Modul",
+		imsi: 9876543210,
+		wlanModulRevision: 2,
+		wlanModulTyp: "WLAN-Modul-Advanced",
+	},
+    {
+		id: 3,
+		datType: 1,
+		protocolVersion: 2,
+		firmwareVersion: "1.5.0",
+		inputChannels: 4,
+		outputChannels: 4,
+		isRuthmann: false,
+		isJlg: false,
+		isPalfinger: true,
+		hasNoDiag: false,
+		hasKeyFunction: true,
+		hasEqtraceFinder: false,
+		hasEqtraceGate: true,
+		hasSeparateGps: true,
+		modulRevision: 2,
+		modulTyp: "CAN-Modul-Pro",
+		imsi: 1122334455,
+		wlanModulRevision: 1,
+		wlanModulTyp: "WLAN-Modul",
+	},
+];
+
+const columns: ColumnDef<GeraeteinfoInterface>[] = [
+	{ accessorKey: "modulTyp", header: "Modultyp" },
+	{ accessorKey: "firmwareVersion", header: "Firmware" },
+	{ accessorKey: "protocolVersion", header: "Protokoll" },
+    {
+		accessorKey: "actions",
+		header: "Aktionen",
+		cell: ({ row }) => (
+			<Button size="sm" onClick={() => alert(`Details für ${row.modulTyp} anzeigen`)}>
+				Details
+			</Button>
+		),
+	},
+];
 
 function App() {
-	const columnsWithCustomCells: ColumnDef<User>[] = [
-		{ accessorKey: 'id', header: 'ID' },
-		{
-			accessorKey: 'role',
-			header: 'Rolle',
-			cell: ({ row }) => {
-				if (row.role === 'admin') {
-					return <span className='flex items-center gap-1'><Crown className='text-primary' />{row.role}</span>;
-				}
-				if (row.role === 'moderator') {
-					return <span className='flex items-center gap-1'><HeartPlus className='text-error' />{row.role}</span>;
-				}
-				return <span className='flex items-center gap-1'><User className='text-info' />{row.role}</span>;
-			}
-		},
-		{
-			accessorKey: 'image',
-			header: 'Bild',
-			cell: ({ row }) => (
-				<div className="w-14 flex items-center justify-center">
-					<img
-						src={row.image}
-						alt={`${row.firstName} ${row.lastName}`}
-						className="size-12"
-					/>
-				</div>
-			)
-		},
-		{ accessorKey: 'firstName', header: 'Vorname' },
-		{ accessorKey: 'lastName', header: 'Nachname' },
-		{ accessorKey: 'maidenName', header: 'Maidenname' },
-		{ accessorKey: 'age', header: 'Alter' },
-		{ accessorKey: 'gender', header: 'Geschlecht' },
-		{
-			accessorKey: 'email',
-			header: 'E-Mail',
-			cell: ({ row }) => (
-				<div className="w-full flex items-start">
-					{/* <Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`mailto:${row.email}`)}> */}
-					<Button
-						variant='ghost'
-						className='text-nowrap flex items-center gap-1'
-						onClick={() => {
-							setDialogType('email');
-							setIsDialogOpen(true);
-							setSelectedUserData(row);
-						}}>
-						<Mail className='size-4' /> {row.email}
-					</Button>
-				</div>
-			)
-		},
-		{
-			accessorKey: 'phone',
-			header: 'Telefon',
-			cell: ({ row }) => (
-				<div className="w-full flex items-start">
-					{/* <Button variant='ghost' className='text-nowrap flex items-center gap-1' onClick={() => window.open(`tel:${row.phone}`)}> */}
-					<Button
-						variant='ghost'
-						className='text-nowrap flex items-center gap-1'
-						onClick={() => {
-							setDialogType('call');
-							setIsDialogOpen(true);
-							setSelectedUserData(row);
-						}}>
-						<Phone className='size-4' /> {row.phone}
-					</Button>
-				</div>
-			)
-		},
-		{ accessorKey: 'username', header: 'Benutzername' },
-		{ accessorKey: 'password', header: 'Passwort' },
-		{ accessorKey: 'birthDate', header: 'Geburtsdatum' },
-		{ accessorKey: 'bloodGroup', header: 'Blutgruppe' },
-		{ accessorKey: 'height', header: 'Größe' },
-		{ accessorKey: 'weight', header: 'Gewicht' },
-		{ accessorKey: 'eyeColor', header: 'Augenfarbe' },
-		{ accessorKey: 'hair', header: 'Haare' },
-		{ accessorKey: 'hair.color', header: 'Haarfarbe' },
-		{ accessorKey: 'hair.type', header: 'Haarart' },
-		{
-			accessorKey: 'actions', header: '', cell: ({ row }) => (
-				<Popover
-					trigger={
-						<Button variant='ghost'>Aktionen</Button>
-					}
-					content={
-						<div className="flex flex-col gap-1">
-							<div className="text-left font-semibold ms-2"><span className="text-on-surface/50 font-normal">#{row.id}</span> {row.firstName} {row.lastName}</div>
-							<Separator className="bg-outline-variant my-1" />
-							<Button
-								variant='ghost'
-								className='justify-start'
-								onClick={() => {
-									setDialogType('call');
-									setIsDialogOpen(true);
-									setSelectedUserData(row);
-								}}
-							>
-								<PhoneCall className='size-4 mr-2' /> Anrufen
-							</Button>
-							<Button
-								variant='ghost'
-								className='justify-start'
-								onClick={() => {
-									setDialogType('email');
-									setIsDialogOpen(true);
-									setSelectedUserData(row);
-								}}
-							>
-								<Mail className='size-4 mr-2' /> E-Mail senden
-							</Button>
-							<Separator className="bg-outline-variant my-1" />
-							{/* delete */}
-							<Button
-								variant='ghost'
-								className='justify-start text-error'
-								onClick={async () => {
-									const confirmed = await confirm({
-										title: 'Benutzer löschen',
-										message: `Möchten Sie ${row.firstName} ${row.lastName} wirklich löschen?`,
-										confirmText: 'Löschen',
-										cancelText: 'Abbrechen',
-									});
-									if (confirmed) {
-										toast.success(`${row.firstName} ${row.lastName} wurde gelöscht.`);
-									} else {
-										toast.info(`${row.firstName} ${row.lastName} wurde nicht gelöscht.`);
-									}
-								}}
-							>
-								<Trash2 className='size-4 mr-2' /> Löschen
-							</Button>
-						</div>
-					}
-				/>
-			)
-		}
+	const [view, setView] = useState<"table" | "card">("table");
 
-	];
-	const [data, setData] = useState<User[]>([]);
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [selectedUserData, setSelectedUserData] = useState<User | undefined>(undefined);
-	const [dialogType, setDialogType] = useState<'call' | 'email'>('call');
-
-	const { toast } = useToast();
-	const { confirm, ConfirmationDialog } = useConfirm();
-
-	const fetchData = async () => {
-		try {
-			setTimeout(async () => {
-				const response = await fetch('https://dummyjson.com/users');
-				if (!response.ok) {
-					throw new Error('Network response was not ok');
-				}
-				const result = await response.json();
-				setData(result.users);
-				toast.success('Daten erfolgreich geladen!');
-			}, 0); // Simulate loading delay
-		} catch (error) {
-			console.error('Fetch error:', error);
-		}
-	};
-
-	useEffect(() => {
-		fetchData();
-	}, []);
-
-	const isLoading = data.length === 0;
+		const toggleView = () => {
+			setView(view === "table" ? "card" : "table");
+		};
 
 	return (
 		<div className="p-4">
 			<Toaster />
-			<ConfirmationDialog />
-			<Dialog
-				open={isDialogOpen}
-				onClose={() => {
-					setIsDialogOpen(false);
-				}}
-				classNameOverlay="bg-linear-to-b from-black/50 to-primary backdrop-blur-none!" // This line seems to be the issue.
-			>
-				{selectedUserData &&
-					(dialogType === 'call' ?
-						<ExampleCallDialog userData={selectedUserData} /> :
-						<ExampleEmailDialog userData={selectedUserData} />
-					)
-				}
-			</Dialog>
-
-			{isLoading ? (
-				<div className="space-y-2">
-					{Array.from({ length: 10 }).map((_, i) => (
-						<Skeleton key={i} className={"h-10 w-full"} delay={i * 100} />
+			<div className="mb-4">
+				<Button onClick={toggleView}>
+					{view === "table" ? "Kartenansicht" : "Tabellenansicht"}
+				</Button>
+			</div>
+			{view === "table" ? (
+				<DataTable data={geraeteinfos} columns={columns} />
+			) : (
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					{geraeteinfos.map((geraet) => (
+						<DataCard
+							key={geraet.id}
+							data={geraet}
+							variant="outlined"
+							config={{
+								visibleFields: ["modulTyp", "firmwareVersion", "protocolVersion"],
+								hiddenFields: [
+									"datType",
+									"inputChannels",
+									"outputChannels",
+									{ key: "isRuthmann", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "isJlg", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "isPalfinger", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "hasNoDiag", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "hasKeyFunction", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "hasEqtraceFinder", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "hasEqtraceGate", cell: (value) => (value ? "Ja" : "Nein") },
+									{ key: "hasSeparateGps", cell: (value) => (value ? "Ja" : "Nein") },
+									"modulRevision",
+									"imsi",
+									"wlanModulRevision",
+									"wlanModulTyp",
+								],
+							}}
+						>
+							<DataCardHeader>
+								<DataCardTitle>Geräteinfo</DataCardTitle>
+							</DataCardHeader>
+							<DataCardContent>
+								<DataCardValue>{(data) => `Modultyp: ${data.modulTyp}`}</DataCardValue>
+								<DataCardDescription>{(data) => `Firmware: ${data.firmwareVersion}`}</DataCardDescription>
+							</DataCardContent>
+						</DataCard>
 					))}
 				</div>
-			) : (
-				<DataTable
-					data={data}
-					columns={columnsWithCustomCells}
-					cellAlignment={Alignment.CENTER}
-				/>
 			)}
-		</div>
-	);
-}
-
-function ExampleCallDialog({ userData }: { userData: User }) {
-	return (
-		<div className="text-center">
-			<div className="size-16 bg-primary flex items-center justify-center rounded-full mb-4 m-auto">
-				<PhoneCall className="text-on-primary" />
-			</div>
-			<h1 className="text-xl font-semibold mb-2">{userData.firstName} {userData.lastName}</h1>
-			{userData && <p>Calling: {userData.phone}</p>}
-			<div className="flex items-center gap-1 mt-4">
-				<Button
-					className="w-full"
-					onClick={() => alert(`Calling ${userData.phone}`)}
-				>Anrufen</Button>
-				<CopyButton text={userData.phone} />
-			</div>
-		</div>
-	);
-}
-
-function ExampleEmailDialog({ userData }: { userData: User }) {
-	const { toast } = useToast();
-
-	return (
-		<div className="text-center">
-			<div className="size-16 bg-primary flex items-center justify-center rounded-full mb-4 m-auto">
-				<Mail className="text-on-primary" />
-			</div>
-			<h1 className="text-xl font-semibold mb-2">{userData.firstName} {userData.lastName}</h1>
-			{userData && <p><span className="font-semibold">Email:</span> {userData.email}</p>}
-			<div className="flex items-center gap-1 mt-4">
-				<Button
-					className="w-full"
-					onClick={() => window.open(`mailto:${userData.email}`)}
-				>E-Mail senden</Button>
-				<CopyButton
-					text={userData.email}
-					successulCallback={() => toast.success('E-Mail-Adresse kopiert!')}
-				/>
-			</div>
 		</div>
 	);
 }

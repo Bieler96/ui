@@ -24,7 +24,7 @@ const DataCard = <TData,>({ data, config, variant, children, className, ...props
 	return (
 		<DataCardContext.Provider value={data}>
 			<Card
-				className={clsx("p-4", className)}
+				className={clsx("p-4 h-fit", className)}
 				variant={variant}
 				{...props}
 			>
