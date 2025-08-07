@@ -37,6 +37,7 @@ export function Select<T>({
 	const [activeIndex, setActiveIndex] = useState(0);
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const [searchTerm, setSearchTerm] = useState("");
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const filteredOptions = options.filter((option) =>
 		option.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -78,8 +79,11 @@ export function Select<T>({
 		if (isOpen) {
 			setActiveIndex(0);
 			setSearchTerm("");
+			if (withSearch) {
+				setTimeout(() => searchInputRef.current?.focus(), 0);
+			}
 		}
-	}, [isOpen]);
+	}, [isOpen, withSearch]);
 
 	const handleSelect = (optionValue: T) => {
 		if (multiple && Array.isArray(value)) {
@@ -119,6 +123,7 @@ export function Select<T>({
 		<div className="flex flex-col">
 			{withSearch && (
 				<Input
+					ref={searchInputRef}
 					placeholder="Search..."
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
