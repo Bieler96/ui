@@ -88,6 +88,7 @@ export function Select<T>({
 
 	return (
 		<Popover
+			fullWidth
 			open={isOpen}
 			onOpenChange={setIsOpen}
 			className={clsx("w-full", className)}
@@ -99,7 +100,7 @@ export function Select<T>({
 						disabled ? "opacity-50 pointer-events-none" : "cursor-pointer",
 					)}
 				>
-					<div className="flex-grow">{renderValue()}</div>
+					<div className="flex-grow w-full">{renderValue()}</div>
 					<ChevronDown
 						className={clsx(
 							"w-5 h-5 text-on-surface-variant transition-transform duration-200",

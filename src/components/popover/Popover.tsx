@@ -17,6 +17,7 @@ export interface PopoverProps {
 	placement?: Placement;
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
+	fullWidth?: boolean;
 }
 
 export function Popover({
@@ -27,6 +28,7 @@ export function Popover({
 	placement = "bottom",
 	open: controlledOpen,
 	onOpenChange,
+	fullWidth = false,
 }: PopoverProps) {
 	const [internalOpen, setInternalOpen] = useState(false);
 	const open = controlledOpen ?? internalOpen;
@@ -81,10 +83,10 @@ export function Popover({
 		};
 
 	return (
-		<div className="relative inline-block">
+		<div className={clsx("relative", fullWidth ? "w-full" : "inline-block")}>
 			<div
 				ref={refs.setReference}
-				className="cursor-pointer inline-block"
+				className={clsx("cursor-pointer", fullWidth ? "w-full" : "inline-block")}
 				{...triggerProps}
 			>
 				{trigger}
