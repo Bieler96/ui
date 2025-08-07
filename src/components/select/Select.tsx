@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
@@ -70,9 +70,13 @@ export function Select<T>({
 	const renderValue = () => {
 		if (multiple && Array.isArray(value) && value.length > 0) {
 			return (
-				<div className="flex flex-wrap gap-1">
+				<div className="h-fit flex flex-wrap gap-1">
 					{value.map((v) => (
-						<Chip variant="input" key={String(v)} onDelete={() => handleSelect(v)} label={getLabel(v)} />
+						<Chip variant="input" key={String(v)} onDelete={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							handleSelect(v);
+						}} label={getLabel(v)} />
 					))}
 				</div>
 			);
