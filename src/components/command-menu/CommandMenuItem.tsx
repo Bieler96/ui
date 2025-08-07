@@ -15,7 +15,7 @@ export const CommandMenuItem = React.forwardRef<HTMLLIElement, CommandMenuItemPr
 			className={clsx(
 				"flex items-center gap-2 p-2 rounded-lg cursor-pointer",
 				{
-					"bg-primary text-on-primary": isActive,
+					"bg-primary-container text-on-primary-container": isActive,
 					"hover:bg-hover": !isActive,
 				}
 			)}

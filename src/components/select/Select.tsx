@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
@@ -31,6 +31,46 @@ export function Select<T>({
 	disabled = false,
 }: SelectProps<T>) {
 	const [isOpen, setIsOpen] = useState(false);
+	const [activeIndex, setActiveIndex] = useState(0);
+	const listRef = useRef<Array<HTMLLIElement | null>>([]);
+
+	useEffect(() => {
+		if (isOpen) {
+			const handleKeyDown = (e: KeyboardEvent) => {
+				if (e.key === "ArrowDown") {
+					e.preventDefault();
+					setActiveIndex((prev) => (prev + 1) % options.length);
+				} else if (e.key === "ArrowUp") {
+					e.preventDefault();
+					setActiveIndex((prev) => (prev - 1 + options.length) % options.length);
+				} else if (e.key === "Enter") {
+					e.preventDefault();
+					if (options[activeIndex]) {
+						handleSelect(options[activeIndex].value);
+					}
+				} else if (e.key === "Escape") {
+					setIsOpen(false);
+				}
+			};
+
+			document.addEventListener("keydown", handleKeyDown);
+			return () => {
+				document.removeEventListener("keydown", handleKeyDown);
+			};
+		}
+	}, [isOpen, options, activeIndex]);
+
+	useEffect(() => {
+		if (isOpen && listRef.current[activeIndex]) {
+			listRef.current[activeIndex]?.scrollIntoView({ block: "nearest" });
+		}
+	}, [isOpen, activeIndex]);
+
+	useEffect(() => {
+		if (isOpen) {
+			setActiveIndex(0);
+		}
+	}, [isOpen]);
 
 	const handleSelect = (optionValue: T) => {
 		if (multiple && Array.isArray(value)) {
@@ -68,9 +108,11 @@ export function Select<T>({
 
 	const popoverContent = (
 		<ul className="py-1 max-h-60 overflow-auto">
-			{options.map((option) => (
+			{options.map((option, index) => (
 				<CommandMenuItem
 					key={String(option.value)}
+					ref={(el) => { listRef.current[index] = el; }}
+					isActive={activeIndex === index}
 					onSelect={() => handleSelect(option.value)}
 				>
 					{multiple && Array.isArray(value) ? (
