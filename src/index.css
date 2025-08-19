@@ -67,3 +67,19 @@
 body {
 	@apply bg-surface text-on-surface;
 }
+
+.shrink-hover {
+	@apply transition-transform duration-150 hover:scale-95;
+}
+
+.shrink-active {
+	@apply transition-transform duration-150 active:scale-90;
+}
+
+.grow-hover {
+	@apply transition-transform duration-150 hover:scale-105;
+}
+
+.grow-active {
+	@apply transition-transform duration-150 active:scale-110;
+}

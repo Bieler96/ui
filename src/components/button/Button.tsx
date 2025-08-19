@@ -24,7 +24,6 @@ export function Button({
 		md: "h-12 md:h-10 px-6 text-base",
 		lg: "h-14 md:h-11 px-8 text-lg",
 	};
-
 	const variants = {
 		filled: "bg-primary text-on-primary hover:bg-primary-dark",
 		outlined: "border border-primary text-primary hover:bg-primary/10 dark:hover:bg-primary/20",

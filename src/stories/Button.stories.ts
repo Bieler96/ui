@@ -101,3 +101,12 @@ export const Disabled: Story = {
 		disabled: true,
 	},
 };
+
+export const ButtonGrow: Story = {
+	args: {
+		children: 'Button with Ring Effect',
+		variant: 'filled',
+		size: 'md',
+		className: 'bouncy',
+	},
+}
