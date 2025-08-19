@@ -22,6 +22,7 @@ export * from './components/tooltip/Tooltip';
 export * from './components/textarea/Textarea';
 export * from './components/tag-input/TagInput';
 export * from './components/data-card/DataCard';
+export * from './components/empty-state/EmptyState';
 
 export * from './hooks/useAlert';
 export * from './hooks/useConfirm';
