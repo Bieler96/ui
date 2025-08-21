@@ -25,6 +25,7 @@ const filterFields: FilterField[] = [
 	{ value: "description", label: "Description", type: "string" },
 	{ value: "estimated_hours", label: "Estimated Hours", type: "number" },
 	{ value: "spent_hours", label: "Spent Hours", type: "number" },
+	{ value: "is_active", label: "Is Active", type: "bool" },
 ];
 
 export const Default: Story = {

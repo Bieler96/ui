@@ -16,7 +16,7 @@ interface FilterCriteria {
 export interface FilterField {
 	value: string;
 	label: string;
-	type: 'select' | 'date' | 'string' | 'number';
+	type: 'select' | 'date' | 'string' | 'number' | 'bool';
 	options?: string[];
 }
 
@@ -75,6 +75,8 @@ export function Filter({ fields }: FilterProps) {
 		let newValue = "";
 		if (fieldConfig && fieldConfig.type === 'select' && fieldConfig.options && fieldConfig.options.length > 0) {
 			newValue = fieldConfig.options[0];
+		} else if (fieldConfig && fieldConfig.type === 'bool') {
+			newValue = "true";
 		}
 
 		const newFilter: FilterCriteria = {
@@ -138,6 +140,18 @@ export function Filter({ fields }: FilterProps) {
 
 		if (fieldConfig.type === "select") {
 			const selectOptions = fieldConfig.options?.map(opt => ({ label: opt, value: opt })) || []
+			return (
+				<Select
+					value={value}
+					onChange={(newValue) => updateFilter(id, { value: newValue as string })}
+					options={selectOptions}
+					placeholder="Select value"
+				/>
+			)
+		}
+
+		if (fieldConfig.type === "bool") {
+			const selectOptions = [{ label: "true", value: "true" }, { label: "false", value: "false" }];
 			return (
 				<Select
 					value={value}

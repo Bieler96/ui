@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, Check } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Chip } from "../chip/Chip";
 import { CommandMenuItem } from "../command-menu/CommandMenuItem";
@@ -77,13 +77,14 @@ export function Select<T>({
 
 	useEffect(() => {
 		if (isOpen) {
-			setActiveIndex(0);
+			const selectedIndex = options.findIndex(option => !multiple && option.value === value);
+			setActiveIndex(selectedIndex !== -1 ? selectedIndex : 0);
 			setSearchTerm("");
 			if (withSearch) {
 				setTimeout(() => searchInputRef.current?.focus(), 0);
 			}
 		}
-	}, [isOpen, withSearch]);
+	}, [isOpen, withSearch, options, value, multiple]);
 
 	const handleSelect = (optionValue: T) => {
 		if (multiple && Array.isArray(value)) {
@@ -144,7 +145,10 @@ export function Select<T>({
 								label={option.label}
 							/>
 						) : (
-							<span>{option.label}</span>
+							<div className="flex items-center justify-between w-full">
+								<span>{option.label}</span>
+								{value === option.value && <Check className="h-4 w-4" />}
+							</div>
 						)}
 					</CommandMenuItem>
 				))}
