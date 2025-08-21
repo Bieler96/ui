@@ -31,6 +31,7 @@ export function Filter({ fields }: FilterProps) {
 	const [highlightedIndex, setHighlightedIndex] = useState(0)
 	const listRef = useRef<Array<HTMLLIElement | null>>([])
 	const searchInputRef = useRef<HTMLInputElement>(null)
+	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
 	const getAvailableFields = () => {
 		const selectedFields = filters.map((filter) => filter.field).filter(Boolean)
@@ -87,22 +88,27 @@ export function Filter({ fields }: FilterProps) {
 		setFilters([...filters, newFilter])
 		setFieldSelectorOpen(false)
 		setAddFilterSearch("")
+		setHasUnsavedChanges(true)
 	}
 
 	const removeFilter = (id: string) => {
 		setFilters(filters.filter((filter) => filter.id !== id))
+		setHasUnsavedChanges(true)
 	}
 
 	const updateFilter = (id: string, updates: Partial<FilterCriteria>) => {
 		setFilters(filters.map((filter) => (filter.id === id ? { ...filter, ...updates } : filter)))
+		setHasUnsavedChanges(true)
 	}
 
 	const clearAllFilters = () => {
 		setFilters([])
+		setHasUnsavedChanges(true)
 	}
 
 	const applyFilters = () => {
 		console.log("Applying filters:", filters.filter(f => f.field && f.value))
+		setHasUnsavedChanges(false)
 	}
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -320,7 +326,7 @@ export function Filter({ fields }: FilterProps) {
 							onClick={applyFilters}
 							size="sm"
 						>
-							Apply
+							Apply{hasUnsavedChanges && "*"}
 						</Button>
 					</div>
 				</div>
