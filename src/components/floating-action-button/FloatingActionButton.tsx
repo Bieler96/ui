@@ -19,7 +19,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 	return (
 		<button
 			className={clsx(
-				"inline-flex items-center justify-center font-medium transition-all duration-150 ease-in-out",
+				"inline-flex items-center justify-center font-medium transition-all duration-150 ease-in-out cursor-pointer",
 				"h-14",
 				"bg-primary text-on-primary shadow-md hover:shadow-lg",
 				extended
