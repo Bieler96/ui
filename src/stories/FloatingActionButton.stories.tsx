@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'; // Corrected import
-import FloatingActionButton from '../components/floating-action-button/FloatingActionButton';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { FloatingActionButton } from '../components/floating-action-button/FloatingActionButton';
 
 // A simple plus icon for demonstration
 const PlusIcon = () => (
@@ -79,4 +79,55 @@ export const Interactive: Story = {
     // No specific args needed here as they are managed by useState
   },
   name: 'Interactive (Click to Toggle Extended)',
+};
+
+export const OnLongPage: Story = {
+  render: (args) => {
+    const [isExtended, setIsExtended] = useState(true); // Initial state: extended
+    const lastScrollY = useRef(0);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > lastScrollY.current) {
+          // Scrolling down
+          setIsExtended(false);
+        } else if (currentScrollY < lastScrollY.current) {
+          // Scrolling up
+          setIsExtended(true);
+        }
+        lastScrollY.current = currentScrollY;
+      };
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, []);
+
+    return (
+      <>
+        <div style={{ height: '2000px', border: '1px solid #ccc', padding: '20px' }}>
+          <p>Scroll down to see the Floating Action Button.</p>
+          {Array.from({ length: 50 }).map((_, i) => (
+            <p key={i}>This is some dummy content to make the page scrollable. Line {i + 1}</p>
+          ))}
+          <p style={{ marginTop: '1000px' }}>End of scrollable content.</p>
+        </div>
+        <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+          <FloatingActionButton {...args} icon={<PlusIcon />} label="Add Item" extended={isExtended} />
+        </div>
+      </>
+    );
+  },
+  args: {
+    // Default args for the FAB within this context
+    // extended prop is now controlled by the render function
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+  name: 'On a Long Scrollable Page (Scroll-aware)',
 };
