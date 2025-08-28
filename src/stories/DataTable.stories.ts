@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import { DataTable, Alignment, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
 import { Button } from '../components/button/Button';
+import { Status, type StatusProps } from '../components/status/Status';
 
 const meta: Meta<typeof DataTable> = {
 	title: 'Components/DataTable',
@@ -26,10 +27,10 @@ export default meta;
 
 // Beispieldaten für einfache Tabelle
 const simpleData = [
-	{ name: 'Max Mustermann', age: 30, city: 'Berlin', occupation: 'Entwickler' },
-	{ name: 'Anna Schmidt', age: 25, city: 'München', occupation: 'Designerin' },
-	{ name: 'Tom Weber', age: 35, city: 'Hamburg', occupation: 'Manager' },
-	{ name: 'Lisa Müller', age: 28, city: 'Köln', occupation: 'Marketing' },
+	{ name: 'Max Mustermann', age: 30, city: 'Berlin', occupation: 'Entwickler', status: 'approved' },
+	{ name: 'Anna Schmidt', age: 25, city: 'München', occupation: 'Designerin', status: 'in-progress' },
+	{ name: 'Tom Weber', age: 35, city: 'Hamburg', occupation: 'Manager', status: 'rejected' },
+	{ name: 'Lisa Müller', age: 28, city: 'Köln', occupation: 'Marketing', status: 'approved' },
 ];
 
 // Beispieldaten für verschachtelte Objekte
@@ -162,6 +163,12 @@ export const ComplexNestedData: StoryObj<typeof DataTable> = {
 type SimpleData = (typeof simpleData)[0];
 type SimpleDataStory = StoryObj<DataTableProps<SimpleData>>;
 
+const statusMapping: { [key: string]: { variant: StatusProps['variant'], text: string, ping?: boolean } } = {
+	'approved': { variant: 'online', text: 'Genehmigt', ping: true },
+	'in-progress': { variant: 'maintenance', text: 'In Bearbeitung', ping: true },
+	'rejected': { variant: 'offline', text: 'Abgelehnt', ping: true },
+};
+
 const columnsWithCustomCells: ColumnDef<(typeof simpleData)[0]>[] = [
 	{
 		accessorKey: 'name',
@@ -180,6 +187,15 @@ const columnsWithCustomCells: ColumnDef<(typeof simpleData)[0]>[] = [
 	{
 		accessorKey: 'occupation',
 		header: 'Beruf',
+	},
+	{
+		accessorKey: 'status',
+		header: 'Status',
+		cell: ({ row }) => {
+			const statusInfo = statusMapping[row.status];
+			if (!statusInfo) return null;
+			return React.createElement(Status, { variant: statusInfo.variant, text: statusInfo.text, ping: statusInfo.ping });
+		}
 	},
 	{
 		accessorKey: 'actions',
