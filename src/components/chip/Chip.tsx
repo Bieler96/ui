@@ -34,8 +34,7 @@ export const Chip: React.FC<ChipProps> = ({
 }) => {
 	const [isHovered, setIsHovered] = useState(false);
 
-	const baseClasses =
-		'text-on-surface inline-flex items-center justify-center rounded-lg border border-outline-variant px-2 py-1 text-sm text-on-surface font-medium transition-colors duration-150';
+	const baseClasses = 'text-on-surface inline-flex items-center justify-center rounded-lg border border-outline-variant px-2 py-1 text-sm text-on-surface font-medium transition-colors duration-150';
 
 	const variantClasses = {
 		assist: 'hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer',
