@@ -24,6 +24,7 @@ export * from './components/tag-input/TagInput';
 export * from './components/textarea/Textarea';
 export * from './components/toaster/Toaster';
 export * from './components/tooltip/Tooltip';
+export * from './components/timeline';
 
 export * from './hooks/useAlert';
 export * from './hooks/useConfirm';
