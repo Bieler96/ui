@@ -11,6 +11,7 @@ import {
 	DataCardDescription,
 } from "../components/data-card";
 import { Button } from "../components/button/Button";
+import { Filter, FilterCriteria, FilterField } from "../components/filter/Filter";
 
 interface GeraeteinfoInterface {
 	id: number;
@@ -115,6 +116,15 @@ const columns: ColumnDef<GeraeteinfoInterface>[] = [
 	},
 ];
 
+const filterFields: FilterField[] = [
+	{ value: "modulTyp", label: "Modultyp", type: "select", options: ["CAN-Modul", "IO-Modul", "CAN-Modul-Pro"] },
+	{ value: "firmwareVersion", label: "Firmware", type: "string" },
+	{ value: "protocolVersion", label: "Protokoll", type: "number" },
+	{ value: "isRuthmann", label: "Ruthmann", type: "bool" },
+	{ value: "isJlg", label: "JLG", type: "bool" },
+	{ value: "isPalfinger", label: "Palfinger", type: "bool" },
+];
+
 const meta: Meta = {
 	title: "Views/DataView",
 	parameters: {
@@ -127,23 +137,47 @@ export default meta;
 export const Default: StoryObj = {
 	render: () => {
 		const [view, setView] = useState<"table" | "card">("table");
+		const [filteredData, setFilteredData] = useState(geraeteinfos);
 
 		const toggleView = () => {
 			setView(view === "table" ? "card" : "table");
 		};
 
+		const handleApplyFilters = (filters: FilterCriteria[]) => {
+			let data = [...geraeteinfos];
+			filters.forEach(filter => {
+				data = data.filter(item => {
+					const itemValue = item[filter.field as keyof GeraeteinfoInterface];
+					if (typeof itemValue === 'boolean') {
+						return itemValue === (filter.value === 'true');
+					}
+					if (typeof itemValue === 'string') {
+						return itemValue.toLowerCase().includes(filter.value.toLowerCase());
+					}
+					if (typeof itemValue === 'number') {
+						return itemValue === Number(filter.value);
+					}
+					return true;
+				});
+			});
+			setFilteredData(data);
+		};
+
 		return (
 			<div>
+				<div className="mb-4">
+					<Filter fields={filterFields} onApply={handleApplyFilters} />
+				</div>
 				<div className="mb-4">
 					<Button onClick={toggleView}>
 						{view === "table" ? "Kartenansicht" : "Tabellenansicht"}
 					</Button>
 				</div>
 				{view === "table" ? (
-					<DataTable data={geraeteinfos} columns={columns} />
+					<DataTable data={filteredData} columns={columns} />
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-						{geraeteinfos.map((geraet) => (
+						{filteredData.map((geraet) => (
 							<DataCard
 								key={geraet.id}
 								data={geraet}

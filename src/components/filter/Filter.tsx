@@ -7,7 +7,7 @@ import { Popover } from "../popover/Popover"
 import { CommandMenuItem } from "../command-menu/CommandMenuItem"
 import { X, Plus, Filter as FilterIcon } from "lucide-react"
 
-interface FilterCriteria {
+export interface FilterCriteria {
 	id: string
 	field: string
 	value: string
@@ -22,9 +22,10 @@ export interface FilterField {
 
 export interface FilterProps {
 	fields: FilterField[];
+	onApply?: (filters: FilterCriteria[]) => void;
 }
 
-export function Filter({ fields }: FilterProps) {
+export function Filter({ fields, onApply }: FilterProps) {
 	const [filters, setFilters] = useState<FilterCriteria[]>([])
 	const [fieldSelectorOpen, setFieldSelectorOpen] = useState(false)
 	const [addFilterSearch, setAddFilterSearch] = useState("")
@@ -107,7 +108,10 @@ export function Filter({ fields }: FilterProps) {
 	}
 
 	const applyFilters = () => {
-		console.log("Applying filters:", filters.filter(f => f.field && f.value))
+		const activeFilters = filters.filter(f => f.field && f.value);
+		if (onApply) {
+			onApply(activeFilters);
+		}
 		setHasUnsavedChanges(false)
 	}
 
