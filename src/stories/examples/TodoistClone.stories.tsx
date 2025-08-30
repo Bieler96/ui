@@ -12,11 +12,11 @@ import { CalendarIcon, ChevronDownIcon, ChevronRightIcon, InboxIcon, LayoutGridI
 import {
 	CommandMenu,
 	type CommandMenuGroupType,
-	type CommandMenuItemType
 } from '../../components/command-menu/CommandMenu';
 import { useConfirm } from '../../hooks/useConfirm';
 import { useToast } from '../../hooks/useToast';
 import { Toaster } from '../../components/toaster/Toaster';
+import { deleteData, initDB, loadData, saveData } from '../../lib/db';
 
 const meta: Meta = {
 	title: 'Examples/TodoistClone',
@@ -34,6 +34,18 @@ type Todo = {
 	date: string;
 };
 
+type ProjectType = {
+	id: string;
+	label: string;
+	description: string;
+	icon: string;
+};
+
+type SettingsType = {
+	key: string;
+	value: any;
+}
+
 const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: (id: number) => void, onDelete: (id: number) => void, onEdit: (id: number, text: string) => void }) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editText, setEditText] = useState(todo.text);
@@ -47,7 +59,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: 
 	}, [isEditing]);
 
 	const handleSave = () => {
-		if (editText.trim() !== '') {
+		if (editText.trim() !== '' && editText.trim() !== todo.text) {
 			onEdit(todo.id, editText);
 		}
 		setIsEditing(false);
@@ -65,7 +77,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: 
 				onChange={() => onToggle(todo.id)}
 			/>
 			{isEditing ? (
-				<div className="w-full mx-2">
+				<div className="w-full px-2">
 					<Input
 						ref={inputRef}
 						value={editText}
@@ -88,7 +100,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: 
 	);
 }
 
-const projects = [
+const initialProjects: ProjectType[] = [
 	{
 		id: 'personal',
 		label: 'Personal',
@@ -109,28 +121,82 @@ const projects = [
 	}
 ];
 
+const initialTodos: Todo[] = [
+	{ id: 1, text: 'Design the new UI Mockups', completed: false, date: 'Today' },
+	{ id: 2, text: 'Develop the main feature', completed: false, date: 'Tomorrow' },
+	{ id: 3, text: 'Write documentation', completed: true, date: 'Yesterday' },
+];
+
 const TodoistClone = () => {
-	const [todos, setTodos] = useState<Todo[]>([
-		{ id: 1, text: 'Design the new UI Mockups', completed: false, date: 'Today' },
-		{ id: 2, text: 'Develop the main feature', completed: false, date: 'Tomorrow' },
-		{ id: 3, text: 'Write documentation', completed: true, date: 'Yesterday' },
-	]);
+	const [todos, setTodos] = useState<Todo[]>([]);
+	const [projects, setProjects] = useState<ProjectType[]>([]);
 	const [newTodo, setNewTodo] = useState('');
 	const [projectsOpen, setProjectsOpen] = useState(true);
 	const [isDarkMode, setIsDarkMode] = useState(true);
+	const [dbReady, setDbReady] = useState(false);
+	const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
 	const newTodoInputRef = useRef<HTMLInputElement>(null);
 	const { confirm, ConfirmationDialog } = useConfirm();
 	const { toast } = useToast();
 
 	useEffect(() => {
-		if (isDarkMode) {
-			document.documentElement.classList.add('dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-		}
+		const initialize = async () => {
+			await initDB();
+			setDbReady(true);
+		};
+		initialize();
+	}, []);
+
+	useEffect(() => {
+		if (!dbReady) return;
+
+		const loadInitialData = async () => {
+			// Load Todos
+			const storedTodos = await loadData<Todo>('todos');
+			if (storedTodos.length > 0) {
+				setTodos(storedTodos);
+			} else {
+				initialTodos.forEach(todo => saveData('todos', todo));
+				setTodos(initialTodos);
+			}
+
+			// Load Projects
+			const storedProjects = await loadData<ProjectType>('projects');
+			if (storedProjects.length > 0) {
+				setProjects(storedProjects);
+			} else {
+				initialProjects.forEach(project => saveData('projects', project));
+				setProjects(initialProjects);
+			}
+
+			// Load Theme
+			const themeSetting = await loadData<SettingsType>('settings');
+			const theme = themeSetting.find(s => s.key === 'theme');
+			if (theme) {
+				setIsDarkMode(theme.value === 'dark');
+			} else {
+				saveData('settings', { key: 'theme', value: 'dark' });
+				setIsDarkMode(true);
+			}
+			setInitialLoadComplete(true);
+		};
+
+		loadInitialData();
+	}, [dbReady]);
+
+
+	useEffect(() => {
+		document.documentElement.classList.toggle('dark', isDarkMode);
 	}, [isDarkMode]);
 
-	const handleAddTodo = () => {
+	useEffect(() => {
+		if (initialLoadComplete) {
+			saveData('settings', { key: 'theme', value: isDarkMode ? 'dark' : 'light' });
+		}
+	}, [isDarkMode, initialLoadComplete]);
+
+	const handleAddTodo = async () => {
 		if (newTodo.trim() !== '') {
 			const newTodoItem = {
 				id: Date.now(),
@@ -138,21 +204,20 @@ const TodoistClone = () => {
 				completed: false,
 				date: 'Today',
 			};
-			setTodos([
-				...todos,
-				newTodoItem,
-			]);
+			await saveData('todos', newTodoItem);
+			setTodos([...todos, newTodoItem]);
 			setNewTodo('');
 			toast.success(`Task "${newTodoItem.text}" added!`);
 		}
 	};
 
-	const handleToggleTodo = (id: number) => {
-		setTodos(
-			todos.map(todo =>
-				todo.id === id ? { ...todo, completed: !todo.completed } : todo
-			)
-		);
+	const handleToggleTodo = async (id: number) => {
+		const todoToToggle = todos.find(t => t.id === id);
+		if (!todoToToggle) return;
+
+		const updatedTodo = { ...todoToToggle, completed: !todoToToggle.completed };
+		await saveData('todos', updatedTodo);
+		setTodos(todos.map(todo => (todo.id === id ? updatedTodo : todo)));
 	};
 
 	const handleDeleteTodo = async (id: number) => {
@@ -167,6 +232,7 @@ const TodoistClone = () => {
 		});
 
 		if (confirmed) {
+			await deleteData('todos', id);
 			setTodos(todos.filter(todo => todo.id !== id));
 			toast.success(`Task "${todoToDelete.text}" deleted.`);
 		} else {
@@ -174,12 +240,13 @@ const TodoistClone = () => {
 		}
 	};
 
-	const handleEditTodo = (id: number, newText: string) => {
-		setTodos(
-			todos.map(todo =>
-				todo.id === id ? { ...todo, text: newText } : todo
-			)
-		);
+	const handleEditTodo = async (id: number, newText: string) => {
+		const todoToEdit = todos.find(t => t.id === id);
+		if (!todoToEdit) return;
+
+		const updatedTodo = { ...todoToEdit, text: newText };
+		await saveData('todos', updatedTodo);
+		setTodos(todos.map(todo => (todo.id === id ? updatedTodo : todo)));
 		toast.success('Task updated!');
 	};
 
@@ -224,7 +291,6 @@ const TodoistClone = () => {
 			items: [
 				{
 					id: 'toggle-dark-mode',
-					// füge emojies hinzu
 					title: `${isDarkMode ? "☀️" : "🌙"} Toggle Theme`,
 					onSelect: () => setIsDarkMode(!isDarkMode),
 				},
@@ -232,6 +298,9 @@ const TodoistClone = () => {
 		},
 	];
 
+	if (!initialLoadComplete) {
+		return null;
+	}
 
 	return (
 		<div className="w-full h-screen flex flex-col">
@@ -252,8 +321,8 @@ const TodoistClone = () => {
 					</Button>
 				</TopNavBarItems>
 			</TopNavBar>
-			<div className="flex flex-grow">
-				<div className="w-80 p-4 border-r border-outline">
+			<div className="flex flex-grow h-full overflow-hidden">
+				<div className="w-80 p-4 border-r border-outline overflow-y-auto">
 					<Item
 						leadingContent={<InboxIcon className="h-5 w-5" />}
 						label="Inbox"
@@ -280,7 +349,7 @@ const TodoistClone = () => {
 						{projectsOpen ? <ChevronDownIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
 						<h3 className="font-semibold ml-2">Projects</h3>
 					</div>
-					{projectsOpen && (
+					{projectsOpen && projects.length > 0 && (
 						<div className="mt-2 ml-4">
 							{projects.map((project, index) => (
 								<Item
