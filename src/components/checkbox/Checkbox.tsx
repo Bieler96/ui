@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { motion } from "motion/react";
 
 export interface CheckboxProps {
 	checked: boolean;
@@ -16,12 +17,14 @@ export function Checkbox({
 	className = "",
 }: CheckboxProps) {
 	return (
-		<label
+		<motion.label
 			className={clsx(
 				"flex items-center gap-2 cursor-pointer",
 				disabled && "pointer-events-none opacity-50",
-				className
+				className,
 			)}
+			whileHover="hover"
+			whileTap="tap"
 		>
 			<input
 				type="checkbox"
@@ -31,30 +34,37 @@ export function Checkbox({
 				className="sr-only peer"
 			/>
 
-			<div
-				className={clsx(
-					"w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors duration-150",
-					checked
-						? "bg-primary border-primary"
-						: "border-outline"
-				)}
+			<motion.div
+				variants={{
+					hover: { scale: 1.05 },
+					tap: { scale: 0.95 }
+				}}
 			>
-				{checked && (
-					<svg
-						className="w-3 h-3 text-on-primary"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="3"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polyline points="20 6 9 17 4 12" />
-					</svg>
-				)}
-			</div>
+				<div
+					className={clsx(
+						"w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors duration-150",
+						checked
+							? "bg-primary border-primary"
+							: "border-outline",
+					)}
+				>
+					{checked && (
+						<svg
+							className="w-3 h-3 text-on-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="3"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
+							<polyline points="20 6 9 17 4 12" />
+						</svg>
+					)}
+				</div>
+			</motion.div>
 
 			{label && <span className="select-none text-base font-medium">{label}</span>}
-		</label>
+		</motion.label>
 	);
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { motion } from "motion/react";
 
 export interface ItemProps {
 	label: string;
@@ -31,27 +32,36 @@ export function Item({
 			"rounded-none": variant === "none",
 			"rounded-lg": variant === "rounded",
 			"cursor-pointer active:bg-primary-container sm:hover:bg-primary-container": clickable && !disabled,
+			"hover:rounded-lg": clickable && !disabled && (variant === "none" || variant === "first" || variant === "last"),
+			"hover:mb-1": clickable && !disabled && (variant === "first"),
+			"hover:my-1": clickable && !disabled && (variant === "none"),
+			"hover:mt-1": clickable && !disabled && (variant === "last"),
 			"opacity-50 cursor-not-allowed": disabled
 		}
 	);
 
 	return (
-		<div
-			className={classes}
-			onClick={!disabled && clickable ? onClick : undefined}
+		<motion.div
+			whileHover={{ scale: clickable && !disabled ? 1.025 : 1 }}
+			whileTap={{ scale: clickable && !disabled ? 0.975 : 1 }}
 		>
-			{leadingContent && (
-				<span className="text-primary">{leadingContent}</span>
-			)}
-			<div className="flex-1">
-				<p className=" text-primary">{label}</p>
-				{description && (
-					<p className="text-xs text-primary/75">{description}</p>
+			<div
+				className={classes}
+				onClick={!disabled && clickable ? onClick : undefined}
+			>
+				{leadingContent && (
+					<span className="text-primary">{leadingContent}</span>
+				)}
+				<div className="flex-1">
+					<p className=" text-primary">{label}</p>
+					{description && (
+						<p className="text-xs text-primary/75">{description}</p>
+					)}
+				</div>
+				{trailingContent && (
+					<span className="text-xl text-primary">{trailingContent}</span>
 				)}
 			</div>
-			{trailingContent && (
-				<span className="text-xl text-primary">{trailingContent}</span>
-			)}
-		</div>
+		</motion.div>
 	);
 }

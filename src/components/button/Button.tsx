@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React from "react";
+import { motion } from "motion/react";
 
 export type ButtonVariant = "filled" | "outlined" | "tonal" | "ghost";
 
@@ -18,7 +19,7 @@ export function Button({
 	className,
 	...props
 }: ButtonProps) {
-	const base = "cursor-pointer inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none";
+	const base = "group cursor-pointer inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:!pointer-events-none";
 	const sizes = {
 		sm: "h-10 md:h-9 px-4 text-sm",
 		md: "h-12 md:h-10 px-6 text-base",
@@ -32,8 +33,14 @@ export function Button({
 	};
 
 	return (
-		<button className={clsx(base, sizes[size], variants[variant], className)} {...props}>
-			{children}
-		</button>
+		<motion.div
+			whileHover={{ scale: 1.05 }}
+			whileTap={{ scale: 0.95 }}
+			className={clsx(base, variants[variant], className)}
+		>
+			<button {...props} className={clsx(sizes[size], "w-full h-full cursor-pointer")}>
+				{children}
+			</button>
+		</motion.div>
 	);
 }
