@@ -8,12 +8,15 @@ import { Item } from '../../components/item/Item';
 import { Separator } from '../../components/separator/Separator';
 import { Chip } from '../../components/chip/Chip';
 import { EmptyState } from '../../components/empty-state/EmptyState';
-import { CalendarIcon, ChevronDownIcon, ChevronRightIcon, InboxIcon, LayoutGridIcon, MoonIcon, PlusIcon, SunIcon } from 'lucide-react';
+import { CalendarIcon, ChevronDownIcon, ChevronRightIcon, InboxIcon, LayoutGridIcon, MoonIcon, PlusIcon, SunIcon, Trash2Icon } from 'lucide-react';
 import {
 	CommandMenu,
 	type CommandMenuGroupType,
 	type CommandMenuItemType
 } from '../../components/command-menu/CommandMenu';
+import { useConfirm } from '../../hooks/useConfirm';
+import { useToast } from '../../hooks/useToast';
+import { Toaster } from '../../components/toaster/Toaster';
 
 const meta: Meta = {
 	title: 'Examples/TodoistClone',
@@ -31,16 +34,59 @@ type Todo = {
 	date: string;
 };
 
-const TodoItem = ({ todo, onToggle }: { todo: Todo, onToggle: (id: number) => void }) => (
-	<div className={`flex items-center p-2 rounded-md hover:bg-primary-container ${todo.completed ? 'text-gray-500 line-through' : ''}`}>
-		<Checkbox
-			checked={todo.completed}
-			onChange={() => onToggle(todo.id)}
-		/>
-		<span className="flex-grow mx-2">{todo.text}</span>
-		<Chip label={todo.date} />
-	</div>
-);
+const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: (id: number) => void, onDelete: (id: number) => void, onEdit: (id: number, text: string) => void }) => {
+	const [isEditing, setIsEditing] = useState(false);
+	const [editText, setEditText] = useState(todo.text);
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (isEditing) {
+			inputRef.current?.focus();
+			inputRef.current?.select();
+		}
+	}, [isEditing]);
+
+	const handleSave = () => {
+		if (editText.trim() !== '') {
+			onEdit(todo.id, editText);
+		}
+		setIsEditing(false);
+	};
+
+	const handleCancel = () => {
+		setEditText(todo.text);
+		setIsEditing(false);
+	};
+
+	return (
+		<div className={`group flex items-center p-2 rounded-md hover:bg-primary-container ${todo.completed ? 'text-gray-500 line-through' : ''}`}>
+			<Checkbox
+				checked={todo.completed}
+				onChange={() => onToggle(todo.id)}
+			/>
+			{isEditing ? (
+				<div className="w-full mx-2">
+					<Input
+						ref={inputRef}
+						value={editText}
+						onChange={(e) => setEditText(e.target.value)}
+						onBlur={handleSave}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') handleSave();
+							if (e.key === 'Escape') handleCancel();
+						}}
+					/>
+				</div>
+			) : (
+				<span className="flex-grow mx-2 cursor-pointer" onClick={() => setIsEditing(true)}>{todo.text}</span>
+			)}
+			<Chip label={todo.date} />
+			<Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100" onClick={() => onDelete(todo.id)}>
+				<Trash2Icon className="h-4 w-4" />
+			</Button>
+		</div>
+	);
+}
 
 const projects = [
 	{
@@ -73,6 +119,8 @@ const TodoistClone = () => {
 	const [projectsOpen, setProjectsOpen] = useState(true);
 	const [isDarkMode, setIsDarkMode] = useState(true);
 	const newTodoInputRef = useRef<HTMLInputElement>(null);
+	const { confirm, ConfirmationDialog } = useConfirm();
+	const { toast } = useToast();
 
 	useEffect(() => {
 		if (isDarkMode) {
@@ -84,16 +132,18 @@ const TodoistClone = () => {
 
 	const handleAddTodo = () => {
 		if (newTodo.trim() !== '') {
+			const newTodoItem = {
+				id: Date.now(),
+				text: newTodo,
+				completed: false,
+				date: 'Today',
+			};
 			setTodos([
 				...todos,
-				{
-					id: Date.now(),
-					text: newTodo,
-					completed: false,
-					date: 'Today',
-				},
+				newTodoItem,
 			]);
 			setNewTodo('');
+			toast.success(`Task "${newTodoItem.text}" added!`);
 		}
 	};
 
@@ -103,6 +153,34 @@ const TodoistClone = () => {
 				todo.id === id ? { ...todo, completed: !todo.completed } : todo
 			)
 		);
+	};
+
+	const handleDeleteTodo = async (id: number) => {
+		const todoToDelete = todos.find(todo => todo.id === id);
+		if (!todoToDelete) return;
+
+		const confirmed = await confirm({
+			title: 'Delete Task',
+			message: `Are you sure you want to delete "${todoToDelete.text}"? This action cannot be undone.`,
+			confirmText: 'Delete',
+			cancelText: 'Cancel',
+		});
+
+		if (confirmed) {
+			setTodos(todos.filter(todo => todo.id !== id));
+			toast.success(`Task "${todoToDelete.text}" deleted.`);
+		} else {
+			toast.info('Deletion cancelled.');
+		}
+	};
+
+	const handleEditTodo = (id: number, newText: string) => {
+		setTodos(
+			todos.map(todo =>
+				todo.id === id ? { ...todo, text: newText } : todo
+			)
+		);
+		toast.success('Task updated!');
 	};
 
 	const upcomingTodos = todos.filter(todo => !todo.completed);
@@ -157,6 +235,8 @@ const TodoistClone = () => {
 
 	return (
 		<div className="w-full h-screen flex flex-col">
+			<Toaster />
+			<ConfirmationDialog />
 			<CommandMenu groups={commandMenuGroups} />
 			<TopNavBar>
 				<TopNavBarBrand>
@@ -220,7 +300,7 @@ const TodoistClone = () => {
 					<h2 className="text-2xl font-bold mb-6">Inbox</h2>
 					{upcomingTodos.length > 0 ? (
 						upcomingTodos.map(todo => (
-							<TodoItem key={todo.id} todo={todo} onToggle={handleToggleTodo} />
+							<TodoItem key={todo.id} todo={todo} onToggle={handleToggleTodo} onDelete={handleDeleteTodo} onEdit={handleEditTodo} />
 						))
 					) : (
 						<EmptyState
@@ -234,7 +314,7 @@ const TodoistClone = () => {
 							<Separator className="my-6" />
 							<h2 className="text-lg font-semibold mb-4">Completed</h2>
 							{completedTodos.map(todo => (
-								<TodoItem key={todo.id} todo={todo} onToggle={handleToggleTodo} />
+								<TodoItem key={todo.id} todo={todo} onToggle={handleToggleTodo} onDelete={handleDeleteTodo} onEdit={handleEditTodo} />
 							))}
 						</>
 					)}
