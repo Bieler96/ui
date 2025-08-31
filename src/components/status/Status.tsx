@@ -2,7 +2,7 @@ import cx from 'clsx';
 
 export type StatusProps = {
 	variant?: "online" | "offline" | "maintenance" | "degraded";
-	text: string;
+	text?: string;
 	ping?: boolean;
 }
 
@@ -21,14 +21,25 @@ export function Status({
 	};
 
 	return (
-		<div className={cx(baseClasses)}>
-			<div className="relative">
-				<div className={cx(variantClasses[variant], "size-2 rounded-full")}></div>
-				{ping &&
-					<div className={cx(variantClasses[variant], "size-2 rounded-full absolute left-0 top-0 animate-ping")}></div>
-				}
-			</div>
-			<span>{text}</span>
-		</div>
+		<>
+			{text ? (
+				<div className={cx(baseClasses)}>
+					<div className="relative">
+						<div className={cx(variantClasses[variant], "size-2 rounded-full")}></div>
+						{ping &&
+							<div className={cx(variantClasses[variant], "size-2 rounded-full absolute left-0 top-0 animate-ping")}></div>
+						}
+					</div>
+					<span>{text}</span>
+				</div>
+			) : (
+				<div className="relative">
+					<div className={cx(variantClasses[variant], "size-2 rounded-full")}></div>
+					{ping &&
+						<div className={cx(variantClasses[variant], "size-2 rounded-full absolute left-0 top-0 animate-ping")}></div>
+					}
+				</div>
+			)}
+		</>
 	);
 }
