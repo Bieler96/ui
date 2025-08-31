@@ -17,6 +17,7 @@ import { useConfirm } from '../../hooks/useConfirm';
 import { useToast } from '../../hooks/useToast';
 import { Toaster } from '../../components/toaster/Toaster';
 import { deleteData, initDB, loadData, saveData } from '../../lib/db';
+import Magnet from '../../components/magnetic/Magnetic';
 
 const meta: Meta = {
 	title: 'Examples/TodoistClone',
@@ -398,9 +399,11 @@ const TodoistClone = () => {
 									onKeyPress={(e) => e.key === 'Enter' && handleAddTodo()}
 								/>
 							</div>
-							<Button onClick={handleAddTodo}>
-								<PlusIcon className="h-5 w-5" />
-							</Button>
+							<Magnet padding={10} magnetStrength={5}>
+								<Button onClick={handleAddTodo}>
+									<PlusIcon className="h-5 w-5" />
+								</Button>
+							</Magnet>
 						</div>
 					</div>
 				</div>
