@@ -26,6 +26,7 @@ export * from './components/toaster/Toaster';
 export * from './components/tooltip/Tooltip';
 export * from './components/timeline';
 export * from './components/log/Log';
+export * from './components/tabs';
 
 export * from './hooks/useAlert';
 export * from './hooks/useConfirm';
