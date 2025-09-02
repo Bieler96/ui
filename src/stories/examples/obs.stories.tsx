@@ -5,6 +5,7 @@ import { Button } from '../../components/button/Button';
 import { Drawer } from '../../components/drawer/Drawer';
 import { RefreshCw, Power, FileText } from 'lucide-react';
 import { Status } from '../../components/status/Status';
+import { useAlert } from '../../hooks/useAlert';
 
 const meta: Meta = {
 	title: 'Examples/OBS',
@@ -173,6 +174,7 @@ const MachineList: React.FC<{
 }> = ({ group, onBack }) => {
 	const [selectedMachine, setSelectedMachine] = useState<Machine | null>(null);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+	const { alert } = useAlert();
 
 	const handleMachineClick = (machine: Machine) => {
 		setSelectedMachine(machine);
@@ -180,9 +182,9 @@ const MachineList: React.FC<{
 	};
 
 	const otherActions = selectedMachine ? [
-		{ label: "Update Agent", onClick: () => alert(`Updating agent on ${selectedMachine.name}`) },
-		{ label: "Run Diagnostics", onClick: () => alert(`Running diagnostics on ${selectedMachine.name}`) },
-		{ label: "Open Terminal", onClick: () => alert(`Opening terminal on ${selectedMachine.name}`) }
+		{ label: "Update Agent", onClick: () => alert({ title: `Updating agent on ${selectedMachine.name}`, message: "" }) },
+		{ label: "Run Diagnostics", onClick: () => alert({ title: `Running diagnostics on ${selectedMachine.name}`, message: "" }) },
+		{ label: "Open Terminal", onClick: () => alert({ title: `Opening terminal on ${selectedMachine.name}`, message: "" }) }
 	] : [];
 
 	return (
@@ -214,9 +216,9 @@ const MachineList: React.FC<{
 					<div className="p-4 flex flex-col gap-4">
 						<h2 className="text-2xl font-bold text-center mb-4">{selectedMachine.name}</h2>
 						<div className="flex justify-around">
-							<ActionItem icon={<RefreshCw />} label="Restart" onClick={() => alert(`Restarting ${selectedMachine.name}`)} />
-							<ActionItem icon={<Power />} label="Shutdown" onClick={() => alert(`Shutting down ${selectedMachine.name}`)} />
-							<ActionItem icon={<FileText />} label="View Logs" onClick={() => alert(`Viewing logs for ${selectedMachine.name}`)} />
+							<ActionItem icon={<RefreshCw />} label="Restart" onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })} />
+							<ActionItem icon={<Power />} label="Shutdown" onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })} />
+							<ActionItem icon={<FileText />} label="View Logs" onClick={() => alert({ title: `Viewing logs for ${selectedMachine.name}`, message: "" })} />
 						</div>
 						<div>
 							<div className="flex flex-col">
@@ -232,12 +234,12 @@ const MachineList: React.FC<{
 							</div>
 						</div>
 						<div className="grid grid-cols-2 gap-2">
-							<Button className='h-12' onClick={() => alert(`Restarting ${selectedMachine.name}`)}>
+							<Button className='h-12' onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })}>
 								<div className='flex flex-row items-center gap-2'>
 									<RefreshCw className="size-4" />Restart
 								</div>
 							</Button>
-							<Button className='h-12' onClick={() => alert(`Shutting down ${selectedMachine.name}`)}>
+							<Button className='h-12' onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })}>
 								<div className='flex flex-row items-center gap-2'>
 									<Power className="size-4" />Shutdown
 								</div>
