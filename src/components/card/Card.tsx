@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from "clsx";
 
-export type CardProps = {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant?: 'elevated' | 'filled' | 'outlined';
-} & React.ComponentProps<"div">;
+}
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>((
 	{ variant = 'filled', children, className, ...props }, ref) => {
