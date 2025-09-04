@@ -7,7 +7,7 @@ import { CommandMenu, type CommandMenuItemType } from '../components/command-men
 import { useAlert } from '../hooks/useAlert';
 import { useDrag } from '@use-gesture/react';
 import { useSpring } from '@react-spring/web';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { StoryObj } from '@storybook/react-vite';
 
 const meta = {
 	title: 'Components/TopAppBar',
