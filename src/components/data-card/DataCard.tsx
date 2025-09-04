@@ -2,11 +2,11 @@ import React from "react";
 import { Card } from "../card/Card";
 import clsx from "clsx";
 
-const DataCardContext = React.createContext<any>(null);
+const DataCardContext = React.createContext<unknown | null>(null);
 
 export type DataCardFieldConfig<TData> = {
 	key: keyof TData & string;
-	cell?: (value: any, row: TData) => React.ReactNode;
+	cell?: (value: TData[keyof TData], row: TData) => React.ReactNode;
 };
 
 export type DataCardConfig<TData> = {
@@ -93,11 +93,11 @@ const DataCardHeader = React.forwardRef<
 DataCardHeader.displayName = "DataCardHeader";
 
 type DataCardTitleProps = Omit<React.HTMLAttributes<HTMLHeadingElement>, 'children'> & {
-	children?: React.ReactNode | ((data: any) => React.ReactNode);
+	children?: React.ReactNode | ((data: TData) => React.ReactNode);
 };
 
 const DataCardTitle = React.forwardRef<HTMLHeadingElement, DataCardTitleProps>(({ className, children, ...props }, ref) => {
-	const data = React.useContext(DataCardContext);
+	const data = React.useContext(DataCardContext) as TData;
 	return (
 		<h3
 			ref={ref}
@@ -119,11 +119,11 @@ const DataCardContent = React.forwardRef<
 DataCardContent.displayName = "DataCardContent";
 
 type DataCardValueProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
-	children?: React.ReactNode | ((data: any) => React.ReactNode);
+	children?: React.ReactNode | ((data: TData) => React.ReactNode);
 };
 
 const DataCardValue = React.forwardRef<HTMLDivElement, DataCardValueProps>(({ className, children, ...props }, ref) => {
-	const data = React.useContext(DataCardContext);
+	const data = React.useContext(DataCardContext) as TData;
 	return (
 		<div
 			ref={ref}
@@ -137,11 +137,11 @@ const DataCardValue = React.forwardRef<HTMLDivElement, DataCardValueProps>(({ cl
 DataCardValue.displayName = "DataCardValue";
 
 type DataCardDescriptionProps = Omit<React.HTMLAttributes<HTMLParagraphElement>, 'children'> & {
-	children?: React.ReactNode | ((data: any) => React.ReactNode);
+	children?: React.ReactNode | ((data: TData) => React.ReactNode);
 };
 
 const DataCardDescription = React.forwardRef<HTMLParagraphElement, DataCardDescriptionProps>(({ className, children, ...props }, ref) => {
-	const data = React.useContext(DataCardContext);
+	const data = React.useContext(DataCardContext) as TData;
 	return (
 		<p
 			ref={ref}

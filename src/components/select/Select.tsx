@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { ChevronDown, Search, Check } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Chip } from "../chip/Chip";
 import { CommandMenuItem } from "../command-menu/CommandMenuItem";
@@ -67,7 +67,7 @@ export function Select<T>({
 				document.removeEventListener("keydown", handleKeyDown);
 			};
 		}
-	}, [isOpen, filteredOptions, activeIndex]);
+	}, [isOpen, filteredOptions, activeIndex, handleSelect]);
 
 	useEffect(() => {
 		if (isOpen && listRef.current[activeIndex]) {
@@ -86,7 +86,7 @@ export function Select<T>({
 		}
 	}, [isOpen, withSearch, options, value, multiple]);
 
-	const handleSelect = (optionValue: T) => {
+	const handleSelect = useCallback((optionValue: T) => {
 		if (multiple && Array.isArray(value)) {
 			const newValue = value.includes(optionValue)
 				? value.filter((v) => v !== optionValue)
@@ -96,7 +96,7 @@ export function Select<T>({
 			onChange(optionValue);
 			setIsOpen(false);
 		}
-	};
+	}, [multiple, value, onChange, setIsOpen]);
 
 	const getLabel = (val: T) => options.find((o) => o.value === val)?.label || String(val);
 

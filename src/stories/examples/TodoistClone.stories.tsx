@@ -44,7 +44,7 @@ type ProjectType = {
 
 type SettingsType = {
 	key: string;
-	value: any;
+	value: string;
 }
 
 const TodoItem = ({ todo, onToggle, onDelete, onEdit }: { todo: Todo, onToggle: (id: number) => void, onDelete: (id: number) => void, onEdit: (id: number, text: string) => void }) => {

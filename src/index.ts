@@ -12,7 +12,7 @@ export * from './components/copy-button/CopyButton';
 export * from './components/data-card/DataCard';
 export * from './components/datatable/DataTable';
 export * from './components/dialog/Dialog';
-export * from './components/drawer/Drawer';
+
 export * from './components/empty-state/EmptyState';
 export * from './components/filter';
 export * from './components/input/Input';

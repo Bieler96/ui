@@ -7,7 +7,7 @@ export type ChipProps = {
 	label: string;
 	icon?: React.ReactNode;
 	avatar?: React.ReactNode;
-	onDelete?: (e: any) => void;
+	onDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	onClick?: () => void;
 	selected?: boolean;
 	colors?: {

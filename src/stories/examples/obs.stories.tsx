@@ -130,12 +130,6 @@ const sampleData: MachineGroup[] = [
 	},
 ];
 
-const statusColors: Record<string, string> = {
-	online: 'bg-green-500',
-	offline: 'bg-red-500',
-	maintenance: 'bg-yellow-500',
-};
-
 const ActionItem: React.FC<{ icon: React.ReactNode; label: string; onClick: () => void; }> = ({ icon, label, onClick }) => (
 	<div className="flex flex-col items-center gap-2" onClick={onClick}>
 		<div className="w-16 h-16 bg-surface-variant rounded-full flex items-center justify-center">

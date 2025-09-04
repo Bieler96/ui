@@ -1,10 +1,5 @@
 import React from "react";
-
-export enum Alignment {
-	LEFT = "left",
-	CENTER = "center",
-	RIGHT = "right",
-}
+import { Alignment, getHeaderGroups, HeaderGroup } from "../../utils/datatable";
 
 export type ColumnDef<TData> = {
 	accessorKey: keyof TData | string;
@@ -18,42 +13,6 @@ export type DataTableProps<TData> = {
 	headerAlignment?: Alignment;
 	cellAlignment?: Alignment;
 };
-
-export type HeaderGroup = {
-	parent: string;
-	children: string[];
-};
-
-export function getHeaderGroups(data: Array<Record<string, any>>): HeaderGroup[] {
-	const allKeys = new Set<string>();
-	data.forEach((row) => {
-		Object.keys(row).forEach((key) => {
-			if (row[key] && typeof row[key] === "object" && !Array.isArray(row[key])) {
-				Object.keys(row[key]).forEach((childKey) => {
-					allKeys.add(`${key}.${childKey}`);
-				});
-			} else {
-				allKeys.add(key);
-			}
-		});
-	});
-
-	const groups: Record<string, string[]> = {};
-	allKeys.forEach((fullKey) => {
-		const [parent, child] = fullKey.split(".");
-		if (child) {
-			if (!groups[parent]) groups[parent] = [];
-			groups[parent].push(child);
-		} else {
-			if (!groups[fullKey]) groups[fullKey] = [];
-		}
-	});
-
-	return Object.entries(groups).map(([parent, children]) => ({
-		parent,
-		children,
-	}));
-}
 
 function getHeaderGroupsFromColumns<T>(columns: ColumnDef<T>[]): HeaderGroup[] {
 	const groups: Record<string, string[]> = {};
@@ -75,11 +34,11 @@ function getHeaderGroupsFromColumns<T>(columns: ColumnDef<T>[]): HeaderGroup[] {
 	}));
 }
 
-function getValue(obj: Record<string, any>, path: string): any {
-	return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
+function getValue(obj: Record<string, unknown>, path: string): unknown {
+	return path.split(".").reduce((acc: Record<string, unknown> | undefined, key) => (acc ? acc[key] : undefined), obj);
 }
 
-export function DataTable<TData extends Record<string, any>>({
+export function DataTable<TData extends Record<string, unknown>>({
 	data,
 	columns,
 	headerAlignment = Alignment.CENTER,

@@ -23,7 +23,7 @@ export const useConfirm = (): UseConfirmReturn => {
 		});
 	}, []);
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		setOpen(false);
 		setTimeout(() => {
 			if (resolve) {
@@ -31,9 +31,9 @@ export const useConfirm = (): UseConfirmReturn => {
 			}
 			setOptions(null);
 		}, 200);
-	};
+	}, [resolve]);
 
-	const handleConfirm = () => {
+	const handleConfirm = useCallback(() => {
 		setOpen(false);
 		setTimeout(() => {
 			if (resolve) {
@@ -41,7 +41,7 @@ export const useConfirm = (): UseConfirmReturn => {
 			}
 			setOptions(null);
 		}, 200);
-	};
+	}, [resolve]);
 
 	const ConfirmationDialog = useCallback(() => {
 		if (!options) {
@@ -55,7 +55,7 @@ export const useConfirm = (): UseConfirmReturn => {
 				{...options}
 			/>
 		);
-	}, [options, open]);
+	}, [options, open, handleClose, handleConfirm]);
 
 	return { confirm, ConfirmationDialog };
 };
