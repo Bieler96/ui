@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../components/button/Button';
+import { Camera } from 'lucide-react';
 
 const meta = {
 	title: 'Components/Button',
@@ -15,13 +16,10 @@ const meta = {
 		},
 		size: {
 			control: { type: 'select' },
-			options: ['sm', 'md', 'lg'],
+			options: ['sm', 'md', 'lg', 'icon'],
 		},
 		disabled: {
 			control: { type: 'boolean' },
-		},
-		children: {
-			control: { type: 'text' },
 		},
 	},
 } satisfies Meta<typeof Button>;
@@ -102,11 +100,11 @@ export const Disabled: Story = {
 	},
 };
 
-export const ButtonGrow: Story = {
+export const Icon: Story = {
+	// render: (args) => <Button {...args}><Camera /></Button>,
 	args: {
-		children: 'Button with Ring Effect',
+		children: <Camera />,
 		variant: 'filled',
-		size: 'md',
-		className: 'bouncy',
+		size: 'icon',
 	},
-}
+};

@@ -20,13 +20,19 @@ export interface CommandMenuGroupType {
 export interface CommandMenuProps {
 	groups?: CommandMenuGroupType[];
 	items?: CommandMenuItemType[];
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 }
 
 export function CommandMenu({
 	groups,
-	items
+	items,
+	open,
+	onOpenChange,
 }: CommandMenuProps) {
-	const [isOpen, setIsOpen] = useState(false);
+	const [internalOpen, setInternalOpen] = useState(false);
+	const isOpen = open !== undefined ? open : internalOpen;
+	const setIsOpen = onOpenChange !== undefined ? onOpenChange : setInternalOpen;
 	const [isMounted, setIsMounted] = useState(false);
 	const [animateIn, setAnimateIn] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");

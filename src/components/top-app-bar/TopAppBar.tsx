@@ -16,17 +16,17 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   className,
   center,
 }) => {
-  const baseClasses = 'flex items-center p-4 bg-surface text-on-surface';
+  const baseClasses = 'flex items-center p-2 bg-surface text-on-surface';
 
   return (
     <header className={cx(baseClasses, className, { 'justify-between': !center, 'justify-center': center })}>
       {!center && (
         <>
           <div className="flex items-center">
-            {navigationIcon && <div className="mr-4">{navigationIcon}</div>}
+            {navigationIcon}
             <h1 className="text-xl font-bold">{title}</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-1">
             {actionIcons && actionIcons.map((action, index) => (
               <div key={index}>{action}</div>
             ))}
@@ -37,7 +37,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         <div className="flex items-center justify-center w-full">
           {navigationIcon && <div className="absolute left-4">{navigationIcon}</div>}
           <h1 className="text-xl font-bold">{title}</h1>
-          <div className="absolute right-4 flex items-center space-x-4">
+          <div className="absolute right-4 flex items-center gap-1">
             {actionIcons && actionIcons.map((action, index) => (
               <div key={index}>{action}</div>
             ))}

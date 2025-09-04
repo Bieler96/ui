@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 export type ButtonVariant = "filled" | "outlined" | "tonal" | "ghost";
 
-export type Size = "sm" | "md" | "lg";
+export type Size = "sm" | "md" | "lg" | "icon";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: ButtonVariant;
@@ -24,6 +24,7 @@ export function Button({
 		sm: "h-10 md:h-9 px-4 text-sm",
 		md: "h-12 md:h-10 px-6 text-base",
 		lg: "h-14 md:h-11 px-8 text-lg",
+		icon: "!size-10 md:!size-9 flex items-center justify-center",
 	};
 	const variants = {
 		filled: "bg-primary text-on-primary hover:bg-primary-dark",
