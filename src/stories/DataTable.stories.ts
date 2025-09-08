@@ -56,7 +56,7 @@ const nestedData = [
 ];
 
 // Beispieldaten für leere Tabelle
-const emptyData: Array<Record<string, any>> = [];
+const emptyData: Array<Record<string, unknown>> = [];
 
 // Beispieldaten für große Tabelle
 const largeData = Array.from({ length: 20 }, (_, index) => ({

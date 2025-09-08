@@ -21,7 +21,7 @@ export const useAlert = (): UseAlertReturn => {
 		});
 	}, []);
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		setOpen(false);
 		setTimeout(() => {
 			if (resolve) {
@@ -29,7 +29,7 @@ export const useAlert = (): UseAlertReturn => {
 			}
 			setOptions(null);
 		}, 200);
-	};
+	}, [resolve]);
 
 	const AlertDialog = useCallback(() => {
 		if (!options) {
@@ -38,7 +38,7 @@ export const useAlert = (): UseAlertReturn => {
 		return (
 			<Alert open={open} onClose={handleClose} {...options} />
 		);
-	}, [options, open]);
+	}, [options, open, handleClose]);
 
 	return { alert, AlertDialog };
 };

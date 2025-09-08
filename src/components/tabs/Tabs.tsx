@@ -1,6 +1,10 @@
 import { useState, Children, isValidElement, cloneElement, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
-import { Tab } from './Tab';
+
+interface TabProps {
+	value: string;
+	children: React.ReactNode;
+}
 
 type TabsProps = {
 	children: React.ReactNode;
@@ -15,7 +19,6 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 	const [tabWidths, setTabWidths] = useState<number[]>([]);
 	const [tabOffsets, setTabOffsets] = useState<number[]>([]);
 	const dragX = useMotionValue(0);
-	const [isDragging, setIsDragging] = useState(false);
 
 	useEffect(() => {
 		const updateTabMetrics = () => {
@@ -39,7 +42,7 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 	}, []);
 
 	const activeTabIndex = Children.toArray(children).findIndex(
-		(child) => isValidElement(child) && (child.props as any).value === value
+		(child) => isValidElement(child) && (child.props as TabProps).value === value
 	);
 
 	const handleTabClick = (tabValue: string) => {
@@ -47,10 +50,10 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 	};
 
 	const handleDragStart = () => {
-		setIsDragging(true);
+		// setIsDragging(true);
 	};
 
-	const handleDrag = (event: any, info: any) => {
+	const handleDrag = () => {
 		const currentPosition = dragX.get();
 		const maxScroll = -(Children.count(children) - 1) * containerWidth;
 		const minScroll = 0;
@@ -61,18 +64,18 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 		}
 	};
 
-	const handleDragEnd = (event: any, info: any) => {
-		setIsDragging(false);
+	const handleDragEnd = () => {
+		// setIsDragging(false);
 
-		const offset = info.offset.x;
-		const velocity = info.velocity.x;
+		// const offset = info.offset.x;
+		// const velocity = info.velocity.x;
 
 		// Bestimme die Richtung basierend auf Offset und Geschwindigkeit
-		let direction = 0;
+		const direction = 0;
 
-		if (Math.abs(velocity) > 100 || Math.abs(offset) > containerWidth * 0.1) {
-			direction = offset > 0 ? -1 : 1;
-		}
+		// if (Math.abs(velocity) > 100 || Math.abs(offset) > containerWidth * 0.1) {
+		// 	direction = offset > 0 ? -1 : 1;
+		// }
 
 		// Berechne den neuen Index
 		let newIndex = activeTabIndex + direction;
@@ -94,7 +97,7 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 					const childrenArray = Children.toArray(children);
 					const child = childrenArray[newIndex];
 					if (isValidElement(child)) {
-						onChange((child.props as any).value);
+						onChange((child.props as TabProps).value);
 					}
 				}
 			}
@@ -106,12 +109,12 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 			<div className="flex border-b border-outline relative">
 				{Children.map(children, (child, index) => {
 					if (isValidElement(child)) {
-						return cloneElement(child as React.ReactElement<any>, {
+						return cloneElement(child as React.ReactElement<TabProps>, {
 							ref: (el: HTMLButtonElement) => {
 								tabsRef.current[index] = el;
 							},
-							isActive: (child.props as any).value === value,
-							onClick: () => handleTabClick((child.props as any).value),
+							isActive: (child.props as TabProps).value === value,
+							onClick: () => handleTabClick((child.props as TabProps).value),
 						});
 					}
 					return null;
@@ -158,7 +161,7 @@ export const Tabs = ({ children, value, onChange }: TabsProps) => {
 									style={{ width: containerWidth }}
 									className="flex-shrink-0"
 								>
-									{(child.props as any).children}
+									{(child.props as TabProps).children}
 								</div>
 							);
 						}

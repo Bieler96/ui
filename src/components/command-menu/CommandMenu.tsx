@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import { Input } from "../input/Input";
@@ -59,18 +59,18 @@ export function CommandMenu({
 
 	const flatFilteredItems = useMemo(() => filteredItems.flatMap(group => group.items), [filteredItems]);
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		setAnimateIn(false);
 		setTimeout(() => {
 			setIsOpen(false);
 			setIsMounted(false);
 		}, 200);
-	};
+	}, [setIsOpen]);
 
-	const handleSelect = (item: CommandMenuItemType) => {
+	const handleSelect = useCallback((item: CommandMenuItemType) => {
 		item.onSelect();
 		handleClose();
-	}
+	}, [handleClose]);
 
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -97,7 +97,7 @@ export function CommandMenu({
 		};
 		document.addEventListener("keydown", down);
 		return () => document.removeEventListener("keydown", down);
-	}, [isOpen, activeIndex, flatFilteredItems]);
+	}, [isOpen, activeIndex, flatFilteredItems, handleClose, handleSelect, setIsOpen]);
 
 	useEffect(() => { if (isOpen) setIsMounted(true); }, [isOpen]);
 

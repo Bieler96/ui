@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useRef, useEffect, KeyboardEvent } from "react"
+import { useState, useMemo, useRef, useEffect, KeyboardEvent, useCallback } from "react"
 import { Button } from "../button/Button"
 import { Select } from "../select/Select"
 import { Input } from "../input/Input"
@@ -34,14 +34,14 @@ export function Filter({ fields, onApply }: FilterProps) {
 	const searchInputRef = useRef<HTMLInputElement>(null)
 	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
-	const getAvailableFields = () => {
+	const getAvailableFields = useCallback(() => {
 		const selectedFields = filters.map((filter) => filter.field).filter(Boolean)
 		return fields.filter((field) => !selectedFields.includes(field.value))
-	}
+	}, [filters, fields])
 
 	const availableFields = useMemo(() => {
 		return getAvailableFields().filter(field => field.label.toLowerCase().includes(addFilterSearch.toLowerCase()))
-	}, [filters, addFilterSearch])
+	}, [getAvailableFields, addFilterSearch])
 
 	useEffect(() => {
 		setHighlightedIndex(0)
@@ -208,10 +208,6 @@ export function Filter({ fields, onApply }: FilterProps) {
 			/>
 		)
 	}
-
-	const activeFiltersCount = filters.filter((f) => f.field && f.value).length
-
-	const fieldOptions = fields.map(f => ({ label: f.label, value: f.value }))
 
 	return (
 		<div className="w-full space-y-4">

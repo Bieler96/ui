@@ -6,6 +6,10 @@ export interface ButtonGroupProps {
 	className?: string;
 }
 
+interface ButtonProps {
+    className?: string;
+}
+
 export function ButtonGroup({
 	children,
 	className
@@ -23,7 +27,7 @@ export function ButtonGroup({
 					(child.type as React.ComponentType).name === 'Button'
 				) {
 					const isFirst = index === 0
-					const element = child as React.ReactElement<any>;
+					const element = child as React.ReactElement<ButtonProps>;
 					return React.cloneElement(element, {
 						className: clsx(element.props.className, {
 							'border-l': !isFirst,

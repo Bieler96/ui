@@ -42,7 +42,6 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
 	(props, ref) => {
 		const {
 			type = 'multiple',
-			collapsible: _collapsible,
 			value: valueProp,
 			defaultValue,
 			onValueChange,

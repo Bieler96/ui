@@ -52,7 +52,7 @@ const sampleGroups: CommandMenuGroupType[] = [
 	}
 ];
 
-const render = (args: any) => (
+const render = (args: CommandMenuProps) => (
 	<div className="p-4">
 		<p className="text-center">Press <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘</kbd> <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">K</kbd> to open the command menu.</p>
 		<CommandMenu {...args} />
