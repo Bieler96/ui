@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import clsx from "clsx";
 import { ChevronDown, Check } from "lucide-react";
 import { Checkbox } from "../checkbox/Checkbox";
@@ -24,7 +24,7 @@ export interface SelectProps<T> {
 }
 
 export function Select<T>({
-	options,
+	options = [],
 	value,
 	onChange,
 	multiple = false,
@@ -38,6 +38,18 @@ export function Select<T>({
 	const listRef = useRef<Array<HTMLLIElement | null>>([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const searchInputRef = useRef<HTMLInputElement>(null);
+
+	const handleSelect = useCallback((optionValue: T) => {
+		if (multiple && Array.isArray(value)) {
+			const newValue = value.includes(optionValue)
+				? value.filter((v) => v !== optionValue)
+				: [...value, optionValue];
+			onChange(newValue);
+		} else {
+			onChange(optionValue);
+			setIsOpen(false);
+		}
+	}, [multiple, value, onChange, setIsOpen]);
 
 	const filteredOptions = options.filter((option) =>
 		option.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -86,17 +98,7 @@ export function Select<T>({
 		}
 	}, [isOpen, withSearch, options, value, multiple]);
 
-	const handleSelect = useCallback((optionValue: T) => {
-		if (multiple && Array.isArray(value)) {
-			const newValue = value.includes(optionValue)
-				? value.filter((v) => v !== optionValue)
-				: [...value, optionValue];
-			onChange(newValue);
-		} else {
-			onChange(optionValue);
-			setIsOpen(false);
-		}
-	}, [multiple, value, onChange, setIsOpen]);
+	
 
 	const getLabel = (val: T) => options.find((o) => o.value === val)?.label || String(val);
 
@@ -104,7 +106,7 @@ export function Select<T>({
 		if (multiple && Array.isArray(value) && value.length > 0) {
 			return (
 				<div className="h-fit flex flex-wrap gap-1">
-					{value.map((v) => (
+					{value && value.map((v) => (
 						<Chip variant="input" key={String(v)} onDelete={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
@@ -131,7 +133,7 @@ export function Select<T>({
 				/>
 			)}
 			<ul className="py-1 max-h-60 overflow-auto">
-				{filteredOptions.map((option, index) => (
+				{filteredOptions && filteredOptions.map((option, index) => (
 					<CommandMenuItem
 						key={String(option.value)}
 						ref={(el) => { listRef.current[index] = el; }}
