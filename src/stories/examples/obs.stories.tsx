@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Item } from '../../components/item/Item';
 import { Button } from '../../components/button/Button';
-import { Drawer } from '../../components/drawer/Drawer';
+// import { Drawer } from '../../components/drawer/Drawer';
 import { RefreshCw, Power, FileText } from 'lucide-react';
 import { Status } from '../../components/status/Status';
 import { useAlert } from '../../hooks/useAlert';
@@ -206,41 +206,42 @@ const MachineList: React.FC<{
 				))}
 			</div>
 			{selectedMachine && (
-				<Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} trigger={<div />}>
-					<div className="p-4 flex flex-col gap-4">
-						<h2 className="text-2xl font-bold text-center mb-4">{selectedMachine.name}</h2>
-						<div className="flex justify-around">
-							<ActionItem icon={<RefreshCw />} label="Restart" onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })} />
-							<ActionItem icon={<Power />} label="Shutdown" onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })} />
-							<ActionItem icon={<FileText />} label="View Logs" onClick={() => alert({ title: `Viewing logs for ${selectedMachine.name}`, message: "" })} />
-						</div>
-						<div>
-							<div className="flex flex-col">
-								{otherActions.map((action, index) => (
-									<Item
-										key={action.label}
-										label={action.label}
-										clickable
-										onClick={action.onClick}
-										variant={otherActions.length === 1 ? 'rounded' : index === 0 ? 'first' : index === otherActions.length - 1 ? 'last' : 'none'}
-									/>
-								))}
-							</div>
-						</div>
-						<div className="grid grid-cols-2 gap-2">
-							<Button className='h-12' onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })}>
-								<div className='flex flex-row items-center gap-2'>
-									<RefreshCw className="size-4" />Restart
-								</div>
-							</Button>
-							<Button className='h-12' onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })}>
-								<div className='flex flex-row items-center gap-2'>
-									<Power className="size-4" />Shutdown
-								</div>
-							</Button>
-						</div>
-					</div>
-				</Drawer>
+				<></>
+				// <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} trigger={<div />}>
+				// 	<div className="p-4 flex flex-col gap-4">
+				// 		<h2 className="text-2xl font-bold text-center mb-4">{selectedMachine.name}</h2>
+				// 		<div className="flex justify-around">
+				// 			<ActionItem icon={<RefreshCw />} label="Restart" onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })} />
+				// 			<ActionItem icon={<Power />} label="Shutdown" onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })} />
+				// 			<ActionItem icon={<FileText />} label="View Logs" onClick={() => alert({ title: `Viewing logs for ${selectedMachine.name}`, message: "" })} />
+				// 		</div>
+				// 		<div>
+				// 			<div className="flex flex-col">
+				// 				{otherActions.map((action, index) => (
+				// 					<Item
+				// 						key={action.label}
+				// 						label={action.label}
+				// 						clickable
+				// 						onClick={action.onClick}
+				// 						variant={otherActions.length === 1 ? 'rounded' : index === 0 ? 'first' : index === otherActions.length - 1 ? 'last' : 'none'}
+				// 					/>
+				// 				))}
+				// 			</div>
+				// 		</div>
+				// 		<div className="grid grid-cols-2 gap-2">
+				// 			<Button className='h-12' onClick={() => alert({ title: `Restarting ${selectedMachine.name}`, message: "" })}>
+				// 				<div className='flex flex-row items-center gap-2'>
+				// 					<RefreshCw className="size-4" />Restart
+				// 				</div>
+				// 			</Button>
+				// 			<Button className='h-12' onClick={() => alert({ title: `Shutting down ${selectedMachine.name}`, message: "" })}>
+				// 				<div className='flex flex-row items-center gap-2'>
+				// 					<Power className="size-4" />Shutdown
+				// 				</div>
+				// 			</Button>
+				// 		</div>
+				// 	</div>
+				// </Drawer>
 			)}
 		</div>
 	);

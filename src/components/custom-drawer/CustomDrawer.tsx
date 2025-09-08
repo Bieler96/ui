@@ -60,6 +60,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
 				style={{
 					pointerEvents: x.to((val: number) => (val === -windowWidth ? 'auto' : 'none')),
 					touchAction: 'pan-x',
+					display: open ? 'block' : 'none',
 				}}
 				onClick={(e: React.MouseEvent) => {
 					const element = document.elementFromPoint(e.clientX, e.clientY);

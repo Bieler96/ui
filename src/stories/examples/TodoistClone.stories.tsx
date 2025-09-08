@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { TopNavBar, TopNavBarBrand, TopNavBarItems } from '../../components/top-nav-bar';
+// import { TopNavBar, TopNavBarBrand, TopNavBarItems } from '../../components/top-nav-bar';
 import { Input } from '../../components/input/Input';
 import { Button } from '../../components/button/Button';
 import { Checkbox } from '../../components/checkbox/Checkbox';
@@ -308,7 +308,7 @@ const TodoistClone = () => {
 			<Toaster />
 			<ConfirmationDialog />
 			<CommandMenu groups={commandMenuGroups} />
-			<TopNavBar>
+			{/* <TopNavBar>
 				<TopNavBarBrand>
 					<a href="#" className="flex items-center">
 						<LayoutGridIcon className="h-6 w-6 mr-2" />
@@ -321,7 +321,7 @@ const TodoistClone = () => {
 						{isDarkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
 					</Button>
 				</TopNavBarItems>
-			</TopNavBar>
+			</TopNavBar> */}
 			<div className="flex flex-grow h-full overflow-hidden">
 				<div className="w-80 p-4 border-r border-outline overflow-y-auto">
 					<Item
