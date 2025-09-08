@@ -1,8 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
-import { DataTable, Alignment, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
+import { DataTable, type ColumnDef, type DataTableProps } from '../components/datatable/DataTable';
 import { Button } from '../components/button/Button';
 import { Status, type StatusProps } from '../components/status/Status';
+import { Alignment } from '../utils/datatable';
+import { CopyButton } from '../components/copy-button/CopyButton';
+import { Toaster } from '../components/toaster/Toaster';
+import { toast } from 'sonner';
 
 const meta: Meta<typeof DataTable> = {
 	title: 'Components/DataTable',
@@ -27,10 +31,10 @@ export default meta;
 
 // Beispieldaten für einfache Tabelle
 const simpleData = [
-	{ name: 'Max Mustermann', age: 30, city: 'Berlin', occupation: 'Entwickler', status: 'approved' },
-	{ name: 'Anna Schmidt', age: 25, city: 'München', occupation: 'Designerin', status: 'in-progress' },
-	{ name: 'Tom Weber', age: 35, city: 'Hamburg', occupation: 'Manager', status: 'rejected' },
-	{ name: 'Lisa Müller', age: 28, city: 'Köln', occupation: 'Marketing', status: 'approved' },
+	{ name: 'Max Mustermann', email: 'max@example.com', age: 30, city: 'Berlin', occupation: 'Entwickler', status: 'approved' },
+	{ name: 'Anna Schmidt', email: 'anna@example.com', age: 25, city: 'München', occupation: 'Designerin', status: 'in-progress' },
+	{ name: 'Tom Weber', email: 'tom@example.com', age: 35, city: 'Hamburg', occupation: 'Manager', status: 'rejected' },
+	{ name: 'Lisa Müller', email: 'lisa@example.com', age: 28, city: 'Köln', occupation: 'Marketing', status: 'approved' },
 ];
 
 // Beispieldaten für verschachtelte Objekte
@@ -176,6 +180,20 @@ const columnsWithCustomCells: ColumnDef<(typeof simpleData)[0]>[] = [
 		cell: ({ row }) => React.createElement('span', { className: 'font-bold' }, row.name),
 	},
 	{
+		accessorKey: 'email',
+		header: 'E-Mail',
+		cell: ({ row }) => (
+			<div className="w-fit">
+				<CopyButton
+					text={row.email}
+					label={row.email}
+					labelCopied="E-Mail kopiert!"
+					successulCallback={() => toast.success(`E-Mail ${row.email} kopiert!`)}
+				/>
+			</div>
+		)
+	},
+	{
 		accessorKey: 'age',
 		header: 'Alter',
 		cell: ({ row }) => React.createElement('span', null, `${row.age} Jahre`),
@@ -211,8 +229,13 @@ const columnsWithCustomCells: ColumnDef<(typeof simpleData)[0]>[] = [
 ];
 
 export const WithCustomCells: SimpleDataStory = {
-	args: {
-		data: simpleData,
-		columns: columnsWithCustomCells,
-	},
+	render: () => (
+		<>
+			<Toaster />
+			<DataTable
+				data={simpleData}
+				columns={columnsWithCustomCells}
+			/>
+		</>
+	)
 };
